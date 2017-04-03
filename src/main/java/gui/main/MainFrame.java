@@ -6,7 +6,10 @@
 package gui.main;
 
 import callbacks.impl.PasswordJOptionPane;
+import gui.jpanels.SelectingDeviceJPanel;
 import java.io.File;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import pkcs.Pkcs11;
 import signers.Pkcs7;
 

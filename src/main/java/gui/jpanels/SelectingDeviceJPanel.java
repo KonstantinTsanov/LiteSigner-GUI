@@ -9,9 +9,13 @@ import callbacks.impl.PasswordJOptionPane;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import lombok.extern.java.Log;
 import pkcs.Pkcs11;
 import signers.Pkcs7;
+import tools.DeviceSearcher;
 
 /**
  *
@@ -25,6 +29,21 @@ public class SelectingDeviceJPanel extends javax.swing.JPanel {
      */
     public SelectingDeviceJPanel() {
         initComponents();
+        addAncestorListener(new AncestorListener() {
+            public void ancestorAdded(AncestorEvent event) {
+                for (String result : DeviceSearcher.List()) {
+                    ((DefaultListModel) jList1.getModel()).addElement(result);
+                }
+            }
+            
+            public void ancestorRemoved(AncestorEvent event) {
+                // Component removed from container
+            }
+            
+            public void ancestorMoved(AncestorEvent event) {
+                // Component container moved
+            }
+        });
     }
 
     /**
@@ -42,6 +61,7 @@ public class SelectingDeviceJPanel extends javax.swing.JPanel {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
+        jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(jList1);
 
         jLabel1.setText("Изберете устройство");
