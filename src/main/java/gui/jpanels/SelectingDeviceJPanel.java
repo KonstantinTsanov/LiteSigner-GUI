@@ -10,6 +10,7 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.JList;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import lombok.extern.java.Log;
@@ -29,9 +30,10 @@ public class SelectingDeviceJPanel extends javax.swing.JPanel {
      */
     public SelectingDeviceJPanel() {
         initComponents();
+        repaint();
         addAncestorListener(new AncestorListener() {
             public void ancestorAdded(AncestorEvent event) {
-                for (String result : DeviceSearcher.List()) {
+                for (String result : DeviceSearcher.SearchForDevices()) {
                     ((DefaultListModel) jList1.getModel()).addElement(result);
                 }
             }
@@ -62,6 +64,15 @@ public class SelectingDeviceJPanel extends javax.swing.JPanel {
         jButton2 = new javax.swing.JButton();
 
         jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jList1.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                jList1AncestorAdded(evt);
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
         jScrollPane1.setViewportView(jList1);
 
         jLabel1.setText("Изберете устройство");
@@ -144,6 +155,10 @@ public class SelectingDeviceJPanel extends javax.swing.JPanel {
         });
         thread2.start();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jList1AncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_jList1AncestorAdded
+
+    }//GEN-LAST:event_jList1AncestorAdded
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
