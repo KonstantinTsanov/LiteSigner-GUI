@@ -34,6 +34,17 @@
             <groupId>com.miglayout</groupId>
             <artifactId>miglayout-swing</artifactId>
             <version>5.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.miglayout</groupId>
+                    <artifactId>miglayout-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.miglayout</groupId>
+            <artifactId>miglayout-core</artifactId>
+            <version>5.0</version>
         </dependency>
     </dependencies>
     <properties>
