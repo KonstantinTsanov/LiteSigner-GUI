@@ -39,7 +39,6 @@ public class MainFrame extends JFrame {
         splitPaneH.setLeftComponent(signingJPanel);
         splitPaneH.setRightComponent(menuJPanel);
         pack();
-        revalidate();
     }
 
     private void initComponents() {

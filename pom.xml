@@ -25,12 +25,6 @@
             <version>1.16.12</version>
         </dependency>
         <dependency>
-            <groupId>ktsanov</groupId>
-            <artifactId>litesigner</artifactId>
-            <version>1.0-Snapshot</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
             <groupId>com.miglayout</groupId>
             <artifactId>miglayout-swing</artifactId>
             <version>5.0</version>
@@ -45,6 +39,11 @@
             <groupId>com.miglayout</groupId>
             <artifactId>miglayout-core</artifactId>
             <version>5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>ktsanov</groupId>
+            <artifactId>litesigner</artifactId>
+            <version>1.0-Snapshot</version>
         </dependency>
     </dependencies>
     <properties>
