@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>tsanov</groupId>
     <artifactId>LiteSignerGUI</artifactId>
-    <version>1.0-Snapshot</version>
+    <version>00.00.01</version>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
@@ -40,10 +40,11 @@
             <artifactId>miglayout-core</artifactId>
             <version>5.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/exec-maven-plugin -->
         <dependency>
             <groupId>ktsanov</groupId>
             <artifactId>litesigner</artifactId>
-            <version>1.0-Snapshot</version>
+            <version>00.00.01</version>
         </dependency>
     </dependencies>
     <properties>
@@ -51,5 +52,4 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
-    <name>litesigner-gui</name>
 </project>

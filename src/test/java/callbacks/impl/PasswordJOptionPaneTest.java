@@ -5,18 +5,11 @@
  */
 package callbacks.impl;
 
-import java.io.File;
-import java.security.cert.X509Certificate;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import pkcs.Pkcs11;
-import signers.Pkcs7;
 
 /**
  *

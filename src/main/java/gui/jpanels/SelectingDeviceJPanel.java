@@ -111,7 +111,7 @@ public class SelectingDeviceJPanel extends JPanel {
     private void displayDevices() {
         tokensDescription.clear();
         model.clear();
-        DeviceManager.SearchForDevices().forEach((description, indexAndDriver) -> {
+        DeviceManager.getInstance().SearchForDevices().forEach((description, indexAndDriver) -> {
             tokensDescription.put(description, indexAndDriver);
             model.addElement(description);
         });
