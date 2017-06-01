@@ -7,10 +7,16 @@ package gui.jpanels;
 
 import callbacks.impl.PasswordJOptionPane;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -18,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import net.miginfocom.swing.MigLayout;
@@ -109,11 +116,37 @@ public class SelectingDeviceJPanel extends JPanel {
     }
 
     private void displayDevices() {
-        tokensDescription.clear();
-        model.clear();
-        DeviceManager.getInstance().SearchForDevices().forEach((description, indexAndDriver) -> {
-            tokensDescription.put(description, indexAndDriver);
-            model.addElement(description);
-        });
+        Thread t = new Thread() {
+            @Override
+            public  void run() {
+                Map<String, Map.Entry<Integer, File>> devices = DeviceManager.getInstance().SearchForDevices();
+                try {
+                    SwingUtilities.invokeAndWait(new Runnable() {
+                        @Override
+                        public void run() {
+                            devices.forEach((description, indexAndDriver) -> {
+                                if (tokensDescription.containsKey(description) == false) {
+                                    tokensDescription.put(description, indexAndDriver);
+                                    model.addElement(description);
+                                }
+                            });
+                            tokensDescription.forEach((description, indexAndDriver) -> {
+                                if (devices.containsKey(description) == false) {
+                                    tokensDescription.remove(description);
+                                    model.removeElement(description);
+                                }
+                            });
+                        }
+                    });
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(SelectingDeviceJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InvocationTargetException ex) {
+                    Logger.getLogger(SelectingDeviceJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        };
+        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        exec.scheduleAtFixedRate(t, 0, 1, TimeUnit.SECONDS);
+        t.start();
     }
 }
