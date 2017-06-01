@@ -7,21 +7,21 @@ package gui.jpanels;
 
 import callbacks.impl.PasswordJOptionPane;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -29,6 +29,7 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import net.miginfocom.swing.MigLayout;
 import pkcs.Pkcs11;
+import sun.security.pkcs11.wrapper.PKCS11Exception;
 import tools.DeviceManager;
 
 /**
@@ -40,13 +41,15 @@ public class SelectingDeviceJPanel extends JPanel {
     private JLabel selectingDeviceJLabel;
     private JButton logInDeviceJButton;
     private JButton nextStepJButton;
-    private JButton refreshButton;
     Map<String, Map.Entry<Integer, File>> tokensDescription;
     DefaultListModel<String> model = new DefaultListModel<>();
     private JList<String> deviceList;
     private JScrollPane deviceScrollPane;
+    private ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+    private JFrame parent;
 
-    public SelectingDeviceJPanel() {
+    public SelectingDeviceJPanel(JFrame parent) {
+        this.parent = parent;
         tokensDescription = new HashMap<>();
         MigLayout layout = new MigLayout("", "[grow][grow]", "[shrink 0][grow][shrink 0]");
         setLayout(layout);
@@ -54,13 +57,13 @@ public class SelectingDeviceJPanel extends JPanel {
         addComponents();
         setComponentText(new Locale("bg", "BG"));
         attachListeners();
+
     }
 
     private void initComponents() {
         selectingDeviceJLabel = new JLabel();
         logInDeviceJButton = new JButton();
         nextStepJButton = new JButton();
-        refreshButton = new JButton(new ImageIcon("src/main/resources/images/refresh.png"));
         deviceList = new JList<>(model);
         deviceScrollPane = new JScrollPane(deviceList);
     }
@@ -69,8 +72,7 @@ public class SelectingDeviceJPanel extends JPanel {
         add(selectingDeviceJLabel, "span");
         add(deviceScrollPane, "grow, span, wrap");
         add(logInDeviceJButton);
-        add(refreshButton);
-        add(nextStepJButton, "span 3");
+        add(nextStepJButton, "span 2");
     }
 
     private void setComponentText(Locale locale) {
@@ -95,9 +97,9 @@ public class SelectingDeviceJPanel extends JPanel {
             public void ancestorMoved(AncestorEvent ae) {
             }
         });
-        refreshButton.addActionListener((ae) -> {
-            displayDevices();
-        });
+//        refreshButton.addActionListener((ae) -> {
+//            displayDevices();
+//        });
         logInDeviceJButton.addActionListener((ae) -> {
             String selectedFromTheList = deviceList.getSelectedValue();
             Map.Entry<Integer, File> selectedDevice = tokensDescription.get(selectedFromTheList);
@@ -118,10 +120,10 @@ public class SelectingDeviceJPanel extends JPanel {
     private void displayDevices() {
         Thread t = new Thread() {
             @Override
-            public  void run() {
-                Map<String, Map.Entry<Integer, File>> devices = DeviceManager.getInstance().SearchForDevices();
+            public void run() {
                 try {
-                    SwingUtilities.invokeAndWait(new Runnable() {
+                    Map<String, Map.Entry<Integer, File>> devices = DeviceManager.getInstance().SearchForDevices();
+                    SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
                             devices.forEach((description, indexAndDriver) -> {
@@ -130,22 +132,26 @@ public class SelectingDeviceJPanel extends JPanel {
                                     model.addElement(description);
                                 }
                             });
-                            tokensDescription.forEach((description, indexAndDriver) -> {
+                            for (Iterator<Map.Entry<String, Map.Entry<Integer, File>>> it = tokensDescription.entrySet().iterator(); it.hasNext();) {
+                                String description = it.next().getKey();
                                 if (devices.containsKey(description) == false) {
-                                    tokensDescription.remove(description);
+                                    it.remove();
                                     model.removeElement(description);
                                 }
-                            });
+                            }
+
                         }
                     });
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(SelectingDeviceJPanel.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (InvocationTargetException ex) {
-                    Logger.getLogger(SelectingDeviceJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (PKCS11Exception ex) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            JOptionPane.showMessageDialog(parent, "There was a problem with the device.");
+                        }
+                    });
                 }
             }
         };
-        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         exec.scheduleAtFixedRate(t, 0, 1, TimeUnit.SECONDS);
         t.start();
     }
