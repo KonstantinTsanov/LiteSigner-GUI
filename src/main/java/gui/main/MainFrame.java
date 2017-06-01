@@ -47,7 +47,7 @@ public class MainFrame extends JFrame {
         menuJPanel = new JPanel();
         signingJPanel = new JPanel();
         splitPaneH = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        deviceSelectionPanel = new SelectingDeviceJPanel();
+        deviceSelectionPanel = new SelectingDeviceJPanel(this);
     }
 
     public static void main(String args[]) {
