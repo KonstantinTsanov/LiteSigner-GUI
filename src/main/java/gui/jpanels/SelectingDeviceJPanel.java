@@ -15,8 +15,8 @@ import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -27,6 +27,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
+import lombok.extern.java.Log;
 import net.miginfocom.swing.MigLayout;
 import pkcs.Pkcs11;
 import sun.security.pkcs11.wrapper.PKCS11Exception;
@@ -36,6 +37,7 @@ import tools.DeviceManager;
  *
  * @author KTsan
  */
+@Log
 public class SelectingDeviceJPanel extends JPanel {
 
     private JLabel selectingDeviceJLabel;
@@ -103,12 +105,9 @@ public class SelectingDeviceJPanel extends JPanel {
             System.out.println(selectedFromTheList);
             //[slotListIndex][driver]
             Pkcs11 smartcard = new Pkcs11(selectedDevice.getKey(), selectedDevice.getValue());
-            Thread thread1 = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    smartcard.initGuiHandler(new PasswordJOptionPane(null));
-                    smartcard.login();
-                }
+            Thread thread1 = new Thread(() -> {
+                smartcard.initGuiHandler(new PasswordJOptionPane(null));
+                smartcard.login();
             });
             thread1.start();
         });
@@ -119,10 +118,9 @@ public class SelectingDeviceJPanel extends JPanel {
             @Override
             public void run() {
                 try {
-                    Map<String, Map.Entry<Integer, File>> devices = DeviceManager.getInstance().SearchForDevices();
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
+                    Map<String, Map.Entry<Integer, File>> devices = DeviceManager.getInstance().scanForUSBDevices();
+                    if (devices != null) {
+                        SwingUtilities.invokeLater(() -> {
                             devices.forEach((description, indexAndDriver) -> {
                                 if (tokensDescription.containsKey(description) == false) {
                                     tokensDescription.put(description, indexAndDriver);
@@ -136,20 +134,26 @@ public class SelectingDeviceJPanel extends JPanel {
                                     model.removeElement(description);
                                 }
                             }
-
-                        }
-                    });
+                        });
+                    }
                 } catch (PKCS11Exception ex) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            JOptionPane.showMessageDialog(parent, "There was a problem with the device.");
-                        }
+                    SwingUtilities.invokeLater(() -> {
+                        JOptionPane.showMessageDialog(parent, "There was a problem with the device.");
                     });
                 }
             }
         };
         exec.scheduleAtFixedRate(t, 0, 1, TimeUnit.SECONDS);
         t.start();
+    }
+
+    public boolean cancelDeviceScanner() {
+        exec.shutdown();
+        try {
+            return exec.awaitTermination(3, TimeUnit.SECONDS);
+        } catch (InterruptedException ex) {
+            log.log(Level.SEVERE, "Failed to clean things up before closing the application!", ex);
+            return false;
+        }
     }
 }
