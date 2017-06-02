@@ -8,15 +8,19 @@ package gui.main;
 import gui.jpanels.SelectingDeviceJPanel;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import lombok.extern.java.Log;
 import net.miginfocom.swing.MigLayout;
+import org.usb4java.LibUsb;
 
 /**
  *
  * @author KTsan
  */
+@Log
 public class MainFrame extends JFrame {
 
     private CardLayout menuLayout, signingLayout;
@@ -29,6 +33,7 @@ public class MainFrame extends JFrame {
     public MainFrame() {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         initComponents();
+        attachListeners();
         setLayout(new MigLayout("", "[grow,fill]", "[grow,fill]"));
         menuJPanel.setLayout(menuLayout);
         signingJPanel.setLayout(signingLayout);
@@ -48,6 +53,18 @@ public class MainFrame extends JFrame {
         signingJPanel = new JPanel();
         splitPaneH = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         deviceSelectionPanel = new SelectingDeviceJPanel(this);
+    }
+
+    private void attachListeners() {
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent winEvt) {
+                deviceSelectionPanel.cancelDeviceScanner();
+                LibUsb.exit(null);
+                System.exit(0);
+            }
+        });
     }
 
     public static void main(String args[]) {
