@@ -45,8 +45,8 @@ public class SelectingDeviceJPanel extends JPanel {
     DefaultListModel<String> model = new DefaultListModel<>();
     private JList<String> deviceList;
     private JScrollPane deviceScrollPane;
-    private ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-    private JFrame parent;
+    private final ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+    private final JFrame parent;
 
     public SelectingDeviceJPanel(JFrame parent) {
         this.parent = parent;
@@ -97,9 +97,6 @@ public class SelectingDeviceJPanel extends JPanel {
             public void ancestorMoved(AncestorEvent ae) {
             }
         });
-//        refreshButton.addActionListener((ae) -> {
-//            displayDevices();
-//        });
         logInDeviceJButton.addActionListener((ae) -> {
             String selectedFromTheList = deviceList.getSelectedValue();
             Map.Entry<Integer, File> selectedDevice = tokensDescription.get(selectedFromTheList);
