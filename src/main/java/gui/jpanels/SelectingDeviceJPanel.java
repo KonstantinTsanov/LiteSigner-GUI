@@ -5,7 +5,8 @@
  */
 package gui.jpanels;
 
-import callbacks.impl.PasswordJOptionPane;
+import callbacks.FrameControls;
+import litesigner.callbacks.impl.PasswordJOptionPane;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,14 +36,14 @@ import tools.DeviceManager;
 
 /**
  *
- * @author KTsan
+ * @author Konstantin Tsanov <k.tsanov@gmail.com>
  */
 @Log
 public class SelectingDeviceJPanel extends JPanel {
 
     private JLabel selectingDeviceJLabel;
     private JButton logInDeviceJButton;
-    private JButton nextStepJButton;
+    private JButton backJButton;
     Map<String, Map.Entry<Integer, File>> tokensDescription;
     DefaultListModel<String> model = new DefaultListModel<>();
     private JList<String> deviceList;
@@ -57,7 +58,6 @@ public class SelectingDeviceJPanel extends JPanel {
         setLayout(layout);
         initComponents();
         addComponents();
-        setComponentText(new Locale("bg", "BG"));
         attachListeners();
 
     }
@@ -65,7 +65,7 @@ public class SelectingDeviceJPanel extends JPanel {
     private void initComponents() {
         selectingDeviceJLabel = new JLabel();
         logInDeviceJButton = new JButton();
-        nextStepJButton = new JButton();
+        backJButton = new JButton();
         deviceList = new JList<>(model);
         deviceScrollPane = new JScrollPane(deviceList);
     }
@@ -73,14 +73,15 @@ public class SelectingDeviceJPanel extends JPanel {
     private void addComponents() {
         add(selectingDeviceJLabel, "span");
         add(deviceScrollPane, "grow, span, wrap");
-        add(logInDeviceJButton);
-        add(nextStepJButton, "span 2");
+        add(backJButton, "left");
+        add(logInDeviceJButton, "span 2, right");
     }
 
-    private void setComponentText(Locale locale) {
+    public void setComponentText(Locale locale) {
         ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
         selectingDeviceJLabel.setText(r.getString("selectingDeviceJPanel.selectDeviceLabel"));
         logInDeviceJButton.setText(r.getString("selectingDeviceJPanel.logInButton"));
+        backJButton.setText(r.getString("selectingDeviceJPanel.backJButton"));
     }
 
     private void attachListeners() {
@@ -99,18 +100,24 @@ public class SelectingDeviceJPanel extends JPanel {
             public void ancestorMoved(AncestorEvent ae) {
             }
         });
-        logInDeviceJButton.addActionListener((ae) -> {
-            String selectedFromTheList = deviceList.getSelectedValue();
-            Map.Entry<Integer, File> selectedDevice = tokensDescription.get(selectedFromTheList);
-            System.out.println(selectedFromTheList);
-            //[slotListIndex][driver]
-            Pkcs11 smartcard = new Pkcs11(selectedDevice.getKey(), selectedDevice.getValue());
-            Thread thread1 = new Thread(() -> {
-                smartcard.initGuiHandler(new PasswordJOptionPane(null));
-                smartcard.login();
-            });
-            thread1.start();
+        backJButton.addActionListener((al) -> {
+            ((FrameControls) parent).showChooseOptionLayout();
         });
+        logInDeviceJButton.addActionListener((al) -> {
+            String selectedFromTheList = deviceList.getSelectedValue();
+            if (selectedFromTheList != null) {
+                Map.Entry<Integer, File> selectedDevice = tokensDescription.get(selectedFromTheList);
+                System.out.println(selectedFromTheList);
+                //[slotListIndex][driver]
+                Pkcs11 smartcard = new Pkcs11(selectedDevice.getKey(), selectedDevice.getValue());
+                Thread thread1 = new Thread(() -> {
+                    smartcard.initGuiHandler(new PasswordJOptionPane(null));
+                    smartcard.login();
+                });
+                thread1.start();
+            }
+        });
+
     }
 
     private void displayDevices() {
