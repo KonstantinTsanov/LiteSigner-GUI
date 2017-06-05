@@ -48,9 +48,8 @@ public class PasswordJOptionPane extends JOptionPane implements GuiPasswordCallb
                 JOptionPane.PLAIN_MESSAGE, null);
 
         while (result == JOptionPane.OK_OPTION && password.getPassword().length == 0) {
-            JOptionPane.showMessageDialog(_parent, "Please enter a valid password.", "Password is not valid",
+            JOptionPane.showMessageDialog(_parent, "Please enter a valid PIN.", "PIN is not valid",
                     JOptionPane.ERROR_MESSAGE, null);
-            result = 0;
             result = JOptionPane.showConfirmDialog(_parent, objs, messageTitle, JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.PLAIN_MESSAGE, null);
         }
