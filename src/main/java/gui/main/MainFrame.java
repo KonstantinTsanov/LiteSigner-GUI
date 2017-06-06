@@ -27,6 +27,8 @@ import java.util.prefs.Preferences;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import litesigner.callbacks.impl.PasswordJOptionPane;
+import tools.LiteSignerManager;
 
 /**
  *
@@ -34,20 +36,21 @@ import javax.swing.JMenuItem;
  */
 @Log
 public class MainFrame extends JFrame implements FrameControls {
-
+    
     private CardLayout deviceLayout, signingLayout;
     private JPanel deviceJPanel, signingJPanel;
-
+    
     private JSplitPane splitPaneH;
-
+    
     private SelectingDeviceJPanel deviceSelectionPanel;
     private ChooseAnOptionJPanel chooseAnOptionJPanel;
-
+    
     private final JMenuBar topMenuBar;
     private JMenu fileJMenu, optionsJMenu, languageJMenu;
     private JMenuItem exitJMenuItem;
-
+    
     public MainFrame() {
+        LiteSignerManager.getInstance().setComponents(deviceSelectionPanel, new PasswordJOptionPane(this));
         setLayout(new MigLayout("", "[grow,fill]", "[grow,fill]"));
         setTitle("LiteSigner");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -59,11 +62,11 @@ public class MainFrame extends JFrame implements FrameControls {
         add(chooseAnOptionJPanel);
         pack();
     }
-
+    
     private void initOptionsLayout() {
         chooseAnOptionJPanel = new ChooseAnOptionJPanel(this);
     }
-
+    
     private void initSigningLayout() {
         deviceLayout = new CardLayout();
         signingLayout = new CardLayout();
@@ -80,7 +83,7 @@ public class MainFrame extends JFrame implements FrameControls {
         splitPaneH.setLeftComponent(signingJPanel);
         splitPaneH.setRightComponent(deviceJPanel);
     }
-
+    
     @Override
     public void showSigningLayout() {
         this.getContentPane().remove(chooseAnOptionJPanel);
@@ -89,7 +92,7 @@ public class MainFrame extends JFrame implements FrameControls {
         revalidate();
         repaint();
     }
-
+    
     @Override
     public void showChooseOptionLayout() {
         this.getContentPane().remove(splitPaneH);
@@ -98,12 +101,12 @@ public class MainFrame extends JFrame implements FrameControls {
         revalidate();
         repaint();
     }
-
+    
     private void attachSigningListeners() {
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent winEvt) {
-                deviceSelectionPanel.cancelDeviceScanner();
+                LiteSignerManager.getInstance().cancelDeviceScanner();
                 try {
                     LibUsb.exit(null);
                 } catch (IllegalStateException ex) {
@@ -113,7 +116,7 @@ public class MainFrame extends JFrame implements FrameControls {
             }
         });
     }
-
+    
     private void initMenuBar() {
         createInitFileMenu();
         createInitOptionsMenu();
@@ -157,7 +160,7 @@ public class MainFrame extends JFrame implements FrameControls {
         optionsJMenu.add(languageJMenu);
         topMenuBar.add(optionsJMenu);
     }
-
+    
     private void setLanguage(Locale locale) {
         deviceSelectionPanel.setComponentText(locale);
         chooseAnOptionJPanel.setComponentText(locale);
@@ -190,7 +193,7 @@ public class MainFrame extends JFrame implements FrameControls {
         prefs.put(language, lang.getShortLanguage());
         prefs.put(country, lang.getShortCountry());
     }
-
+    
     private void setComponentText(Locale locale) {
         ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
         fileJMenu.setText(r.getString("MainFrame.optionsMenu.fileJMenu"));
@@ -198,7 +201,7 @@ public class MainFrame extends JFrame implements FrameControls {
         optionsJMenu.setText(r.getString("MainFrame.optionsMenu.optionsJMenu"));
         languageJMenu.setText(r.getString("MainFrame.optionsMenu.languageJMenu"));
     }
-
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
