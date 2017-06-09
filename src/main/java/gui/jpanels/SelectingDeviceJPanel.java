@@ -21,7 +21,7 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import lombok.extern.java.Log;
 import net.miginfocom.swing.MigLayout;
-import tools.LiteSignerManager;
+import core.LiteSignerManager;
 import callbacks.SelectingDeviceComponent;
 
 /**
