@@ -114,7 +114,7 @@ public class SelectingDeviceJPanel extends JPanel implements SelectingDeviceComp
     }
 
     @Override
-    public JFrame getParent() {
+    public JFrame getComponentParent() {
         return parent;
     }
 }
