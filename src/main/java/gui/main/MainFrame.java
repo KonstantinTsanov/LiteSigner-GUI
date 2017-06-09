@@ -19,7 +19,6 @@ import org.usb4java.LibUsb;
 import callbacks.FrameControls;
 import enums.Languages;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -36,21 +35,20 @@ import tools.LiteSignerManager;
  */
 @Log
 public class MainFrame extends JFrame implements FrameControls {
-    
+
     private CardLayout deviceLayout, signingLayout;
     private JPanel deviceJPanel, signingJPanel;
-    
+
     private JSplitPane splitPaneH;
-    
+
     private SelectingDeviceJPanel deviceSelectionPanel;
     private ChooseAnOptionJPanel chooseAnOptionJPanel;
-    
+
     private final JMenuBar topMenuBar;
     private JMenu fileJMenu, optionsJMenu, languageJMenu;
     private JMenuItem exitJMenuItem;
-    
+
     public MainFrame() {
-        LiteSignerManager.getInstance().setComponents(deviceSelectionPanel, new PasswordJOptionPane(this));
         setLayout(new MigLayout("", "[grow,fill]", "[grow,fill]"));
         setTitle("LiteSigner");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -59,14 +57,15 @@ public class MainFrame extends JFrame implements FrameControls {
         initOptionsLayout();
         initSigningLayout();
         setLanguage(getLocaleFromPreferences());
+        LiteSignerManager.getInstance().setComponents(deviceSelectionPanel, new PasswordJOptionPane(this));
         add(chooseAnOptionJPanel);
         pack();
     }
-    
+
     private void initOptionsLayout() {
         chooseAnOptionJPanel = new ChooseAnOptionJPanel(this);
     }
-    
+
     private void initSigningLayout() {
         deviceLayout = new CardLayout();
         signingLayout = new CardLayout();
@@ -83,25 +82,27 @@ public class MainFrame extends JFrame implements FrameControls {
         splitPaneH.setLeftComponent(signingJPanel);
         splitPaneH.setRightComponent(deviceJPanel);
     }
-    
+
     @Override
     public void showSigningLayout() {
         this.getContentPane().remove(chooseAnOptionJPanel);
-        add(splitPaneH, BorderLayout.CENTER);
+        this.getContentPane().add(splitPaneH, BorderLayout.CENTER);
         pack();
         revalidate();
         repaint();
+        setVisible(true);
     }
-    
+
     @Override
     public void showChooseOptionLayout() {
         this.getContentPane().remove(splitPaneH);
-        add(chooseAnOptionJPanel, BorderLayout.CENTER);
+        this.getContentPane().add(chooseAnOptionJPanel, BorderLayout.CENTER);
         pack();
         revalidate();
         repaint();
+        setVisible(true);
     }
-    
+
     private void attachSigningListeners() {
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
@@ -116,7 +117,7 @@ public class MainFrame extends JFrame implements FrameControls {
             }
         });
     }
-    
+
     private void initMenuBar() {
         createInitFileMenu();
         createInitOptionsMenu();
@@ -160,7 +161,7 @@ public class MainFrame extends JFrame implements FrameControls {
         optionsJMenu.add(languageJMenu);
         topMenuBar.add(optionsJMenu);
     }
-    
+
     private void setLanguage(Locale locale) {
         deviceSelectionPanel.setComponentText(locale);
         chooseAnOptionJPanel.setComponentText(locale);
@@ -193,7 +194,7 @@ public class MainFrame extends JFrame implements FrameControls {
         prefs.put(language, lang.getShortLanguage());
         prefs.put(country, lang.getShortCountry());
     }
-    
+
     private void setComponentText(Locale locale) {
         ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
         fileJMenu.setText(r.getString("MainFrame.optionsMenu.fileJMenu"));
@@ -201,7 +202,7 @@ public class MainFrame extends JFrame implements FrameControls {
         optionsJMenu.setText(r.getString("MainFrame.optionsMenu.optionsJMenu"));
         languageJMenu.setText(r.getString("MainFrame.optionsMenu.languageJMenu"));
     }
-    
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
