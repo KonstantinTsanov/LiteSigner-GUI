@@ -99,7 +99,6 @@ public class SelectingDeviceJPanel extends JPanel implements SelectingDeviceComp
             @Override
             public void actionPerformed(ActionEvent e) {
                 String slotDescription = deviceList.getSelectedValue();
-                System.out.println(slotDescription == null);
                 if (slotDescription != null) {
                     LiteSignerManager.getInstance().deviceLogIn(slotDescription);
                 }
