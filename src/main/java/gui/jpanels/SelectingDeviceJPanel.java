@@ -7,7 +7,6 @@ package gui.jpanels;
 
 import callbacks.FrameControls;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.DefaultListModel;
@@ -22,14 +21,15 @@ import javax.swing.event.AncestorListener;
 import lombok.extern.java.Log;
 import net.miginfocom.swing.MigLayout;
 import core.LiteSignerManager;
-import callbacks.SelectingDeviceComponent;
+import javax.swing.JOptionPane;
+import callbacks.SelectingDeviceLayout;
 
 /**
  *
  * @author Konstantin Tsanov <k.tsanov@gmail.com>
  */
 @Log
-public class SelectingDeviceJPanel extends JPanel implements SelectingDeviceComponent {
+public class SelectingDeviceJPanel extends JPanel implements SelectingDeviceLayout {
 
     private JLabel selectingDeviceJLabel;
     private JButton logInDeviceJButton;
@@ -39,6 +39,8 @@ public class SelectingDeviceJPanel extends JPanel implements SelectingDeviceComp
     private JList<String> deviceList;
     private JScrollPane deviceScrollPane;
     private final JFrame parent;
+    //Used for the error messages.
+    private Locale currentLocale;
 
     public SelectingDeviceJPanel(JFrame parent) {
         this.parent = parent;
@@ -66,6 +68,7 @@ public class SelectingDeviceJPanel extends JPanel implements SelectingDeviceComp
     }
 
     public void setComponentText(Locale locale) {
+        currentLocale = locale;
         ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
         selectingDeviceJLabel.setText(r.getString("selectingDeviceJPanel.selectDeviceLabel"));
         logInDeviceJButton.setText(r.getString("selectingDeviceJPanel.logInButton"));
@@ -89,22 +92,19 @@ public class SelectingDeviceJPanel extends JPanel implements SelectingDeviceComp
             }
         }
         );
-        backJButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ((FrameControls) parent).showChooseOptionLayout();
+        backJButton.addActionListener((ActionEvent e) -> {
+            ((FrameControls) parent).showChooseOptionLayout();
+        });
+        logInDeviceJButton.addActionListener((ActionEvent e) -> {
+            String slotDescription = deviceList.getSelectedValue();
+            if (slotDescription != null) {
+                LiteSignerManager.getInstance().deviceLogIn(slotDescription);
+            } else {
+                ResourceBundle r = ResourceBundle.getBundle("Bundle", currentLocale);
+                JOptionPane.showMessageDialog(parent, r.getString("selectingDeviceJPanel.noTokenSelectedError"), r.getString("selectingDeviceJPanel.title"), JOptionPane.WARNING_MESSAGE);
             }
         });
-        logInDeviceJButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String slotDescription = deviceList.getSelectedValue();
-                if (slotDescription != null) {
-                    LiteSignerManager.getInstance().deviceLogIn(slotDescription);
-                }
-            }
-        });
-       
+
     }
 
     @Override
@@ -113,7 +113,7 @@ public class SelectingDeviceJPanel extends JPanel implements SelectingDeviceComp
     }
 
     @Override
-    public JFrame getComponentParent() {
+    public JFrame getLayoutParent() {
         return parent;
     }
 }

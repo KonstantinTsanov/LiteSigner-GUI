@@ -5,8 +5,12 @@
  */
 package gui.jpanels;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 /**
  *
@@ -15,5 +19,9 @@ import javax.swing.JPanel;
 public class SelectingCertificateJPanel extends JPanel {
 
     private JLabel selectingCertificateJLabel;
-    
+    private JButton signButton;
+    private DefaultListModel<String> certificateModel = new DefaultListModel<>();
+    private JList<String> certificateList;
+    private JScrollPane deviceScrollPane;
+
 }
