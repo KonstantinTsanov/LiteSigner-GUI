@@ -22,14 +22,14 @@ import lombok.extern.java.Log;
 import net.miginfocom.swing.MigLayout;
 import core.LiteSignerManager;
 import javax.swing.JOptionPane;
-import callbacks.SelectingDeviceLayout;
+import callbacks.SelectingDevicePanel;
 
 /**
  *
  * @author Konstantin Tsanov <k.tsanov@gmail.com>
  */
 @Log
-public class SelectingDeviceJPanel extends JPanel implements SelectingDeviceLayout {
+public class SelectingDeviceJPanel extends JPanel implements SelectingDevicePanel {
 
     private JLabel selectingDeviceJLabel;
     private JButton logInDeviceJButton;
