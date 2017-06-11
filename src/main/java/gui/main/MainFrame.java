@@ -5,7 +5,7 @@
  */
 package gui.main;
 
-import gui.jpanels.ChooseAnOptionJPanel;
+import gui.jpanels.SelectingOptionJPanel;
 import gui.jpanels.SelectingDeviceJPanel;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -28,6 +28,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import litesigner.callbacks.impl.PasswordJOptionPane;
 import core.LiteSignerManager;
+import gui.jpanels.SelectingCertificateJPanel;
 
 /**
  *
@@ -36,17 +37,20 @@ import core.LiteSignerManager;
 @Log
 public class MainFrame extends JFrame implements FrameControls {
 
-    private CardLayout deviceLayout, signingLayout;
-    private JPanel deviceJPanel, signingJPanel;
+    private CardLayout rightLayout, leftLayout;
+    private JPanel certificateJPanel, deviceJPanel;
 
     private JSplitPane splitPaneH;
 
     private SelectingDeviceJPanel deviceSelectionPanel;
-    private ChooseAnOptionJPanel chooseAnOptionJPanel;
+    private SelectingOptionJPanel optionSelectionPanel;
+    private SelectingCertificateJPanel certificateSelectionPanel;
 
     private final JMenuBar topMenuBar;
     private JMenu fileJMenu, optionsJMenu, languageJMenu;
     private JMenuItem exitJMenuItem;
+
+    private Locale locale = getLocaleFromPreferences();
 
     public MainFrame() {
         setLayout(new MigLayout("", "[grow,fill]", "[grow,fill]"));
@@ -56,36 +60,38 @@ public class MainFrame extends JFrame implements FrameControls {
         initMenuBar();
         initOptionsLayout();
         initSigningLayout();
-        setLanguage(getLocaleFromPreferences());
+        setLanguage(locale);
         LiteSignerManager.getInstance().setComponents(deviceSelectionPanel, new PasswordJOptionPane(this));
-        add(chooseAnOptionJPanel);
+        add(optionSelectionPanel);
         pack();
     }
 
     private void initOptionsLayout() {
-        chooseAnOptionJPanel = new ChooseAnOptionJPanel(this);
+        optionSelectionPanel = new SelectingOptionJPanel(this);
     }
 
     private void initSigningLayout() {
-        deviceLayout = new CardLayout();
-        signingLayout = new CardLayout();
+        rightLayout = new CardLayout();
+        leftLayout = new CardLayout();
         deviceJPanel = new JPanel();
-        signingJPanel = new JPanel();
+        certificateJPanel = new JPanel();
         splitPaneH = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         deviceSelectionPanel = new SelectingDeviceJPanel(this);
+        certificateSelectionPanel = new SelectingCertificateJPanel(locale);
         attachSigningListeners();
-        deviceJPanel.setLayout(deviceLayout);
-        signingJPanel.setLayout(signingLayout);
-        signingJPanel.add(deviceSelectionPanel, deviceSelectionPanel.getClass().toString());
+        deviceJPanel.setLayout(leftLayout);
+        deviceJPanel.add(deviceSelectionPanel, deviceSelectionPanel.getClass().toString());
+        certificateJPanel.setLayout(rightLayout);
+        certificateJPanel.add(certificateSelectionPanel, certificateSelectionPanel.getClass().getName());
         splitPaneH.setDividerLocation(0.5);
         splitPaneH.setResizeWeight(0.5);
-        splitPaneH.setLeftComponent(signingJPanel);
-        splitPaneH.setRightComponent(deviceJPanel);
+        splitPaneH.setLeftComponent(deviceJPanel);
+        splitPaneH.setRightComponent(certificateJPanel);
     }
 
     @Override
     public void showSigningLayout() {
-        this.getContentPane().remove(chooseAnOptionJPanel);
+        this.getContentPane().remove(optionSelectionPanel);
         this.getContentPane().add(splitPaneH, BorderLayout.CENTER);
         pack();
         revalidate();
@@ -96,7 +102,7 @@ public class MainFrame extends JFrame implements FrameControls {
     @Override
     public void showChooseOptionLayout() {
         this.getContentPane().remove(splitPaneH);
-        this.getContentPane().add(chooseAnOptionJPanel, BorderLayout.CENTER);
+        this.getContentPane().add(optionSelectionPanel, BorderLayout.CENTER);
         pack();
         revalidate();
         repaint();
@@ -164,7 +170,9 @@ public class MainFrame extends JFrame implements FrameControls {
 
     private void setLanguage(Locale locale) {
         deviceSelectionPanel.setComponentText(locale);
-        chooseAnOptionJPanel.setComponentText(locale);
+        optionSelectionPanel.setComponentText(locale);
+        certificateSelectionPanel.setComponentText(locale);
+        LiteSignerManager.getInstance().setLocale(locale);
         setComponentText(locale);
     }
 
