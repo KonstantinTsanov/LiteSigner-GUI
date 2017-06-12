@@ -23,6 +23,11 @@ import net.miginfocom.swing.MigLayout;
 import core.LiteSignerManager;
 import javax.swing.JOptionPane;
 import callbacks.DevicePanel;
+import java.security.cert.CertificateEncodingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 /**
  *
@@ -104,6 +109,17 @@ public class SelectingDeviceJPanel extends JPanel implements DevicePanel {
                 JOptionPane.showMessageDialog(parent, r.getString("selectingDeviceJPanel.noTokenSelectedError"), r.getString("selectingDeviceJPanel.title"), JOptionPane.WARNING_MESSAGE);
             }
         });
+        deviceList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent lse) {
+                if (!lse.getValueIsAdjusting()) {
+                    System.out.println(".valueChanged()");
+                    //TODO check if the newly selected value isnt the oldly selected value /perhaps valueChanged does this, eh?/
+                    LiteSignerManager.getInstance().clearCertificateList();
+                    LiteSignerManager.getInstance().displayCertificates(deviceList.getSelectedValue());
+                }
+            }
+        });
 
     }
 
@@ -113,7 +129,7 @@ public class SelectingDeviceJPanel extends JPanel implements DevicePanel {
     }
 
     @Override
-    public JFrame getLayoutParent() {
+    public JFrame getPanelParent() {
         return parent;
     }
 }

@@ -5,11 +5,13 @@
  */
 package gui.jpanels;
 
+import callbacks.CertificatePanel;
 import java.awt.Color;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -23,16 +25,18 @@ import net.miginfocom.swing.MigLayout;
  *
  * @author Konstantin Tsanov <k.tsanov@gmail.com>
  */
-public class SelectingCertificateJPanel extends JPanel {
+public class SelectingCertificateJPanel extends JPanel implements CertificatePanel {
 
     private JLabel selectingCertificateJLabel;
     private DefaultTableModel certificateModel;
     private JTable certificateTable;
     private JScrollPane certificateScrollPane;
     private JButton signButton;
+    private JFrame parent;
     private Locale locale;
 
-    public SelectingCertificateJPanel(Locale locale) {
+    public SelectingCertificateJPanel(JFrame parent, Locale locale) {
+        this.parent = parent;
         this.locale = locale;
         MigLayout layout = new MigLayout("", "[grow]", "[shrink 0][grow][shrink 0]");
         setLayout(layout);
@@ -87,5 +91,15 @@ public class SelectingCertificateJPanel extends JPanel {
 
     private void attachListeners() {
 
+    }
+
+    @Override
+    public DefaultTableModel getTableModel() {
+        return certificateModel;
+    }
+
+    @Override
+    public JFrame getPanelParent() {
+        return parent;
     }
 }

@@ -43,8 +43,8 @@ public class MainFrame extends JFrame implements FrameControls {
     private JSplitPane splitPaneH;
 
     private SelectingDeviceJPanel deviceSelectionPanel;
-    private SelectingOptionJPanel optionSelectionPanel;
     private SelectingCertificateJPanel certificateSelectionPanel;
+    private SelectingOptionJPanel optionSelectionPanel;
 
     private final JMenuBar topMenuBar;
     private JMenu fileJMenu, optionsJMenu, languageJMenu;
@@ -61,7 +61,8 @@ public class MainFrame extends JFrame implements FrameControls {
         initOptionsLayout();
         initSigningLayout();
         setLanguage(locale);
-        LiteSignerManager.getInstance().setComponents(deviceSelectionPanel, new PasswordJOptionPane(this));
+        LiteSignerManager.getInstance().setComponents(deviceSelectionPanel, certificateSelectionPanel,
+                new PasswordJOptionPane(this));
         add(optionSelectionPanel);
         pack();
     }
@@ -77,7 +78,7 @@ public class MainFrame extends JFrame implements FrameControls {
         certificateJPanel = new JPanel();
         splitPaneH = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         deviceSelectionPanel = new SelectingDeviceJPanel(this);
-        certificateSelectionPanel = new SelectingCertificateJPanel(locale);
+        certificateSelectionPanel = new SelectingCertificateJPanel(this, locale);
         attachSigningListeners();
         deviceJPanel.setLayout(leftLayout);
         deviceJPanel.add(deviceSelectionPanel, deviceSelectionPanel.getClass().toString());
