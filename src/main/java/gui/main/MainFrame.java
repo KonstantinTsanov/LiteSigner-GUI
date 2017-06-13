@@ -77,7 +77,7 @@ public class MainFrame extends JFrame implements FrameControls {
         deviceJPanel = new JPanel();
         certificateJPanel = new JPanel();
         splitPaneH = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        deviceSelectionPanel = new SelectingDeviceJPanel(this);
+        deviceSelectionPanel = new SelectingDeviceJPanel(this, locale);
         certificateSelectionPanel = new SelectingCertificateJPanel(this, locale);
         attachSigningListeners();
         deviceJPanel.setLayout(leftLayout);

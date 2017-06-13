@@ -9,14 +9,13 @@ import callbacks.CertificatePanel;
 import java.awt.Color;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import net.miginfocom.swing.MigLayout;
@@ -32,8 +31,8 @@ public class SelectingCertificateJPanel extends JPanel implements CertificatePan
     private JTable certificateTable;
     private JScrollPane certificateScrollPane;
     private JButton signButton;
-    private JFrame parent;
-    private Locale locale;
+    private final JFrame parent;
+    private final Locale locale;
 
     public SelectingCertificateJPanel(JFrame parent, Locale locale) {
         this.parent = parent;
@@ -48,7 +47,15 @@ public class SelectingCertificateJPanel extends JPanel implements CertificatePan
     private void initComponents() {
         selectingCertificateJLabel = new JLabel();
         signButton = new JButton();
-        certificateTable = new JTable(certificateModel);
+        certificateTable = new JTable(certificateModel) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        certificateTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         certificateScrollPane = new JScrollPane(certificateTable);
         certificateScrollPane.getViewport().setBackground(Color.WHITE);
     }
