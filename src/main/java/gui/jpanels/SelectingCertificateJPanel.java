@@ -6,6 +6,7 @@
 package gui.jpanels;
 
 import callbacks.CertificatePanel;
+import core.LiteSignerManager;
 import java.awt.Color;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -16,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import net.miginfocom.swing.MigLayout;
@@ -25,7 +27,7 @@ import net.miginfocom.swing.MigLayout;
  * @author Konstantin Tsanov <k.tsanov@gmail.com>
  */
 public class SelectingCertificateJPanel extends JPanel implements CertificatePanel {
-
+    
     private JLabel selectingCertificateJLabel;
     private DefaultTableModel certificateModel;
     private JTable certificateTable;
@@ -33,7 +35,7 @@ public class SelectingCertificateJPanel extends JPanel implements CertificatePan
     private JButton signButton;
     private final JFrame parent;
     private final Locale locale;
-
+    
     public SelectingCertificateJPanel(JFrame parent, Locale locale) {
         this.parent = parent;
         this.locale = locale;
@@ -42,42 +44,45 @@ public class SelectingCertificateJPanel extends JPanel implements CertificatePan
         initCertificateModel();
         initComponents();
         addComponents();
+        attachListeners();
     }
-
+    
     private void initComponents() {
         selectingCertificateJLabel = new JLabel();
         signButton = new JButton();
         certificateTable = new JTable(certificateModel) {
             private static final long serialVersionUID = 1L;
-
+            
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
+        certificateTable.setColumnSelectionAllowed(false);
+        certificateTable.setRowSelectionAllowed(true);
         certificateTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         certificateScrollPane = new JScrollPane(certificateTable);
         certificateScrollPane.getViewport().setBackground(Color.WHITE);
     }
-
+    
     private void addComponents() {
         add(selectingCertificateJLabel, "span");
         add(certificateScrollPane, "grow, span, wrap");
         add(signButton, "left, span");
     }
-
+    
     private void initCertificateModel() {
         certificateModel = new DefaultTableModel() {
             ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
             String[] certProps = {r.getString("selectingCertificateJPanel.owner"),
                 r.getString("selectingCertificateJPanel.publisher"),
                 r.getString("selectingCertificateJPanel.validFrom")};
-
+            
             @Override
             public int getColumnCount() {
                 return certProps.length;
             }
-
+            
             @Override
             public String getColumnName(int index) {
                 return certProps[index];
@@ -86,27 +91,39 @@ public class SelectingCertificateJPanel extends JPanel implements CertificatePan
         revalidate();
         repaint();
     }
-
+    
     public void setComponentText(Locale locale) {
         ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
+        selectingCertificateJLabel.setText(r.getString("selectingCertificateJPanel.label"));
         TableColumnModel thm = certificateTable.getTableHeader().getColumnModel();
         thm.getColumn(0).setHeaderValue(r.getString("selectingCertificateJPanel.owner"));
         thm.getColumn(1).setHeaderValue(r.getString("selectingCertificateJPanel.publisher"));
         thm.getColumn(2).setHeaderValue(r.getString("selectingCertificateJPanel.validFrom"));
         repaint();
     }
-
+    
     private void attachListeners() {
-
+        certificateTable.getSelectionModel().addListSelectionListener((ListSelectionEvent lse) -> {
+            if (!lse.getValueIsAdjusting()) {
+                if (certificateTable.getSelectedRow() != -1) {
+                    LiteSignerManager.getInstance().checkIfCertificateHasChain(certificateTable.getSelectedRow());
+                }
+            }
+        });
     }
-
+    
     @Override
     public DefaultTableModel getTableModel() {
         return certificateModel;
     }
-
+    
     @Override
     public JFrame getPanelParent() {
         return parent;
+    }
+    
+    @Override
+    public JTable getCertificateTable() {
+        return certificateTable;
     }
 }
