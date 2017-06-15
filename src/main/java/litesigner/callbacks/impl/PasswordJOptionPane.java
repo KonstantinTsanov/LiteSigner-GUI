@@ -7,6 +7,8 @@ package litesigner.callbacks.impl;
 
 import callbacks.GuiPasswordCallback;
 import java.awt.Component;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.event.AncestorEvent;
@@ -19,14 +21,20 @@ import javax.swing.event.AncestorListener;
 public class PasswordJOptionPane extends JOptionPane implements GuiPasswordCallback {
 
     private final Component _parent;
+    private static Locale _locale;
 
     public PasswordJOptionPane(Component parent) {
         _parent = parent;
     }
 
+    public static void setPaneLocale(Locale locale) {
+        _locale = locale;
+    }
+
     @Override
     public char[] getPassword() {
-        String messageTitle = "Enter PIN";
+        ResourceBundle r = ResourceBundle.getBundle("Bundle", _locale);
+        String messageTitle = r.getString("passwordJOptionPane.messageTitle");
         JPasswordField password = new JPasswordField();
         password.addAncestorListener(new AncestorListener() {
             @Override
@@ -43,15 +51,19 @@ public class PasswordJOptionPane extends JOptionPane implements GuiPasswordCallb
             }
         });
 
-        Object[] objs = {"Enter PIN:", password};
+        Object[] objs = {r.getString("passwordJOptionPane.message"), password};
         int result = JOptionPane.showConfirmDialog(_parent, objs, messageTitle, JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.PLAIN_MESSAGE, null);
 
         while (result == JOptionPane.OK_OPTION && password.getPassword().length == 0) {
-            JOptionPane.showMessageDialog(_parent, "Please enter a valid PIN.", "PIN is not valid",
+            JOptionPane.showMessageDialog(_parent, r.getString("passwordJOptionPane.errorMessage.title"), r.getString("passwordJOptionPane.errorMessage.title"),
                     JOptionPane.ERROR_MESSAGE, null);
             result = JOptionPane.showConfirmDialog(_parent, objs, messageTitle, JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.PLAIN_MESSAGE, null);
+        }
+        if (result == JOptionPane.CLOSED_OPTION || result == JOptionPane.CANCEL_OPTION) {
+            password.setText("");
+            return null;
         }
         return password.getPassword();
     }
