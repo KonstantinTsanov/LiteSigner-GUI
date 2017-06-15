@@ -70,6 +70,8 @@ public class SelectingDeviceJPanel extends JPanel implements DevicePanel {
                 return false;
             }
         };
+        deviceTable.setColumnSelectionAllowed(false);
+        deviceTable.setRowSelectionAllowed(true);
         deviceTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         deviceScrollPane = new JScrollPane(deviceTable);
         deviceScrollPane.getViewport().setBackground(Color.WHITE);
@@ -135,8 +137,8 @@ public class SelectingDeviceJPanel extends JPanel implements DevicePanel {
         });
         //Log in button listener
         logInDeviceJButton.addActionListener((ActionEvent e) -> {
-            Object slotDescription = deviceTable.getValueAt(deviceTable.getSelectedRow(), 0);
-            if (slotDescription != null) {
+            if (deviceTable.getSelectedRow() != -1) {
+                Object slotDescription = deviceTable.getValueAt(deviceTable.getSelectedRow(), 0);
                 LiteSignerManager.getInstance().deviceLogIn(slotDescription.toString());
             } else {
                 ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
@@ -145,14 +147,13 @@ public class SelectingDeviceJPanel extends JPanel implements DevicePanel {
         });
         //Table listener
         deviceTable.getSelectionModel().addListSelectionListener((ListSelectionEvent lse) -> {
+            LiteSignerManager.getInstance().clearCertificateList();
             if (!lse.getValueIsAdjusting()) {
-                LiteSignerManager.getInstance().clearCertificateList();
                 if (deviceTable.getSelectedRow() != -1) {
                     LiteSignerManager.getInstance().displayCertificates(deviceTable.getValueAt(deviceTable.getSelectedRow(), 0).toString());
                 }
             }
         });
-
     }
 
     @Override
