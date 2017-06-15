@@ -50,8 +50,11 @@ public class MainFrame extends JFrame implements FrameControls {
     private JMenu fileJMenu, optionsJMenu, languageJMenu;
     private JMenuItem exitJMenuItem;
 
-    private Locale locale = getLocaleFromPreferences();
+    private final Locale locale = getLocaleFromPreferences();
 
+    /**
+     * Constructor for the frame.
+     */
     public MainFrame() {
         setLayout(new MigLayout("", "[grow,fill]", "[grow,fill]"));
         setTitle("LiteSigner");
@@ -67,10 +70,16 @@ public class MainFrame extends JFrame implements FrameControls {
         pack();
     }
 
+    /**
+     * Initializes the options panel and builds the options layout.
+     */
     private void initOptionsLayout() {
         optionSelectionPanel = new SelectingOptionJPanel(this);
     }
 
+    /**
+     * Initializes the signing panels and builds the singing layout.
+     */
     private void initSigningLayout() {
         rightLayout = new CardLayout();
         leftLayout = new CardLayout();
@@ -79,17 +88,20 @@ public class MainFrame extends JFrame implements FrameControls {
         splitPaneH = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         deviceSelectionPanel = new SelectingDeviceJPanel(this, locale);
         certificateSelectionPanel = new SelectingCertificateJPanel(this, locale);
-        attachSigningListeners();
+        attachListeners();
         deviceJPanel.setLayout(leftLayout);
         deviceJPanel.add(deviceSelectionPanel, deviceSelectionPanel.getClass().toString());
         certificateJPanel.setLayout(rightLayout);
         certificateJPanel.add(certificateSelectionPanel, certificateSelectionPanel.getClass().getName());
-        splitPaneH.setDividerLocation(0.5);
-        splitPaneH.setResizeWeight(0.5);
         splitPaneH.setLeftComponent(deviceJPanel);
         splitPaneH.setRightComponent(certificateJPanel);
+        splitPaneH.setDividerLocation(0.5);
+        splitPaneH.setResizeWeight(0.5);
     }
 
+    /**
+     * Hides the choose option panel and shows the panels related to signing.
+     */
     @Override
     public void showSigningLayout() {
         this.getContentPane().remove(optionSelectionPanel);
@@ -100,6 +112,9 @@ public class MainFrame extends JFrame implements FrameControls {
         setVisible(true);
     }
 
+    /**
+     * Hides the panels related to signing and shows the choose option panel.
+     */
     @Override
     public void showChooseOptionLayout() {
         this.getContentPane().remove(splitPaneH);
@@ -110,7 +125,10 @@ public class MainFrame extends JFrame implements FrameControls {
         setVisible(true);
     }
 
-    private void attachSigningListeners() {
+    /**
+     * Attaches the frame's listeners.
+     */
+    private void attachListeners() {
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent winEvt) {
@@ -132,14 +150,13 @@ public class MainFrame extends JFrame implements FrameControls {
     }
 
     /**
-     * creates and initializes the file menu and submenus
+     * creates and initializes the file menu and submenus.
      */
     private void createInitFileMenu() {
         fileJMenu = new JMenu();
         fileJMenu.setMnemonic(KeyEvent.VK_F);
-        exitJMenuItem = new JMenuItem("Exit");
+        exitJMenuItem = new JMenuItem();
         exitJMenuItem.setMnemonic(KeyEvent.VK_E);
-        exitJMenuItem.setToolTipText("Exit application");
         exitJMenuItem.addActionListener((ActionEvent event) -> {
             System.exit(0);
         });
@@ -148,7 +165,7 @@ public class MainFrame extends JFrame implements FrameControls {
     }
 
     /**
-     * Creates and initizlies the options menu and submenu
+     * Creates and initializes the options menu and submenu.
      */
     private void createInitOptionsMenu() {
         optionsJMenu = new JMenu();
@@ -169,12 +186,18 @@ public class MainFrame extends JFrame implements FrameControls {
         topMenuBar.add(optionsJMenu);
     }
 
+    /**
+     * Sets the language for the whole application.
+     *
+     * @param locale Language to be used.
+     */
     private void setLanguage(Locale locale) {
         deviceSelectionPanel.setComponentText(locale);
         optionSelectionPanel.setComponentText(locale);
         certificateSelectionPanel.setComponentText(locale);
         LiteSignerManager.getInstance().setLocale(locale);
         setComponentText(locale);
+        PasswordJOptionPane.setPaneLocale(locale);
     }
 
     /**
@@ -204,6 +227,11 @@ public class MainFrame extends JFrame implements FrameControls {
         prefs.put(country, lang.getShortCountry());
     }
 
+    /**
+     * Sets the text for the frame's components.
+     *
+     * @param locale
+     */
     private void setComponentText(Locale locale) {
         ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
         fileJMenu.setText(r.getString("MainFrame.optionsMenu.fileJMenu"));
@@ -212,6 +240,11 @@ public class MainFrame extends JFrame implements FrameControls {
         languageJMenu.setText(r.getString("MainFrame.optionsMenu.languageJMenu"));
     }
 
+    /**
+     * Entry point for the application.
+     *
+     * @param args
+     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
