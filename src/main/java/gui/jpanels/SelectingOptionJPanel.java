@@ -55,7 +55,7 @@ public final class SelectingOptionJPanel extends JPanel {
 
     private void attachListeners() {
         signFileJButton.addActionListener((al) -> {
-            parent.showSigningLayout();
+            parent.showSigningPanel();
         });
         verifyFileJButton.addActionListener((al) -> {
         });
