@@ -5,7 +5,6 @@
  */
 package litesigner.callbacks.impl;
 
-import callbacks.GuiPasswordCallback;
 import java.awt.Component;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -13,12 +12,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
+import callbacks.PasswordCallback;
 
 /**
  *
  * @author Konstantin Tsanov <k.tsanov@gmail.com>
  */
-public class PasswordJOptionPane extends JOptionPane implements GuiPasswordCallback {
+public class PasswordJOptionPane extends JOptionPane implements PasswordCallback {
 
     private final Component _parent;
     private static Locale _locale;
