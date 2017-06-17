@@ -11,7 +11,11 @@ package callbacks;
  */
 public interface FrameControls {
 
-    public void showSigningLayout();
+    public void showSigningPanel();
 
-    public void showChooseOptionLayout();
+    public void showChooseOptionPanel();
+
+    public void showFileAndSignaturePanel();
+
+    public void hideFileAndSignaturePanel();
 }
