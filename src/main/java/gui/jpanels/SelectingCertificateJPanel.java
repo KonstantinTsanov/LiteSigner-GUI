@@ -16,6 +16,7 @@ import java.util.ResourceBundle;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -120,13 +121,13 @@ public class SelectingCertificateJPanel extends JPanel implements CertificatePan
         nextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-//                if (certificateTable.getSelectedRow() != -1) {
-                ((FrameControls) parent).showFileAndSignaturePanel();
-//                } else {
-//                    ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
-//                    JOptionPane.showMessageDialog(parent, r.getString("selectingCertificateJPanel.noCertificateSelectedError"),
-//                            r.getString("errorMessage.title"), JOptionPane.WARNING_MESSAGE);
-//                }
+                if (certificateTable.getSelectedRow() != -1) {
+                    ((FrameControls) parent).showFileAndSignaturePanel();
+                } else {
+                    ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
+                    JOptionPane.showMessageDialog(parent, r.getString("selectingCertificateJPanel.noCertificateSelectedError"),
+                            r.getString("errorMessage.title"), JOptionPane.WARNING_MESSAGE);
+                }
             }
         });
     }
