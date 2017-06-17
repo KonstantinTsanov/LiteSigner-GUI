@@ -133,7 +133,7 @@ public class SelectingDeviceJPanel extends JPanel implements DevicePanel {
         );
         //Back button listener
         backJButton.addActionListener((ActionEvent e) -> {
-            ((FrameControls) parent).showChooseOptionLayout();
+            ((FrameControls) parent).showChooseOptionPanel();
         });
         //Log in button listener
         logInDeviceJButton.addActionListener((ActionEvent e) -> {
@@ -142,7 +142,8 @@ public class SelectingDeviceJPanel extends JPanel implements DevicePanel {
                 LiteSignerManager.getInstance().deviceLogIn(slotDescription.toString());
             } else {
                 ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
-                JOptionPane.showMessageDialog(parent, r.getString("selectingDeviceJPanel.noTokenSelectedError"), r.getString("selectingDeviceJPanel.title"), JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(parent, r.getString("selectingDeviceJPanel.noTokenSelectedError"),
+                        r.getString("errorMessage.title"), JOptionPane.WARNING_MESSAGE);
             }
         });
         //Table listener
