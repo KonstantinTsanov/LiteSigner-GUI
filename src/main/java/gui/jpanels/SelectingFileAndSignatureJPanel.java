@@ -35,7 +35,7 @@ public class SelectingFileAndSignatureJPanel extends JPanel implements FileCallb
     private ButtonGroup signatureButtonsGroup;
 
     private JButton backButton;
-    private JButton nextButton;
+    private JButton signButton;
 
     private JLabel inputFileLabel;
     private JLabel outputFileLabel;
@@ -70,7 +70,7 @@ public class SelectingFileAndSignatureJPanel extends JPanel implements FileCallb
         signatureButtonsGroup.add(pdfFile);
 
         backButton = new JButton();
-        nextButton = new JButton();
+        signButton = new JButton();
 
         inputFile = new JFileChooser();
         inputFile.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -101,7 +101,7 @@ public class SelectingFileAndSignatureJPanel extends JPanel implements FileCallb
         add(outputFilePath, "growx, span 3");
         add(selectOutputLocationButton, "wrap");
         add(backButton, "south, left");
-        add(nextButton, "south, right, wrap");
+        add(signButton, "south, right, wrap");
     }
 
     public void setComponentText(Locale locale) {
@@ -113,7 +113,7 @@ public class SelectingFileAndSignatureJPanel extends JPanel implements FileCallb
         detachedSignature.setText(r.getString("selectingFileAndSignatureJPanel.detachedSignature"));
         pdfFile.setText(r.getString("selectingFileAndSignatureJPanel.pdfFile"));
         backButton.setText(r.getString("selectingFileAndSignatureJPanel.backButton"));
-        nextButton.setText(r.getString("selectingFileAndSignatureJPanel.nextButton"));
+        signButton.setText(r.getString("selectingFileAndSignatureJPanel.signButton"));
         repaint();
     }
 
@@ -121,7 +121,7 @@ public class SelectingFileAndSignatureJPanel extends JPanel implements FileCallb
         backButton.addActionListener((ActionEvent ae) -> {
             ((FrameControls) parent).hideFileAndSignaturePanel();
         });
-        nextButton.addActionListener((ActionEvent ae) -> {
+        signButton.addActionListener((ActionEvent ae) -> {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         });
         selectInputFileButton.addActionListener((ActionEvent ae) -> {
