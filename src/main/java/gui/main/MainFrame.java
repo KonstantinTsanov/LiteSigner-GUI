@@ -29,6 +29,7 @@ import javax.swing.JMenuItem;
 import litesigner.callbacks.impl.PasswordJOptionPane;
 import core.LiteSignerManager;
 import gui.jpanels.SelectingCertificateJPanel;
+import gui.jpanels.SelectingFileAndSignatureJPanel;
 
 /**
  *
@@ -38,13 +39,14 @@ import gui.jpanels.SelectingCertificateJPanel;
 public class MainFrame extends JFrame implements FrameControls {
 
     private CardLayout rightLayout, leftLayout;
-    private JPanel certificateJPanel, deviceJPanel;
+    private JPanel signingJPanel, deviceJPanel;
 
     private JSplitPane splitPaneH;
 
     private SelectingDeviceJPanel deviceSelectionPanel;
     private SelectingCertificateJPanel certificateSelectionPanel;
     private SelectingOptionJPanel optionSelectionPanel;
+    private SelectingFileAndSignatureJPanel signatureSelectionJPanel;
 
     private final JMenuBar topMenuBar;
     private JMenu fileJMenu, optionsJMenu, languageJMenu;
@@ -61,11 +63,12 @@ public class MainFrame extends JFrame implements FrameControls {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         topMenuBar = new JMenuBar();
         initMenuBar();
-        initOptionsLayout();
-        initSigningLayout();
+        initOptionsPanel();
+        initSigningPanels();
+        initSignatureSelectionPanel();
         setLanguage(locale);
         LiteSignerManager.getInstance().setComponents(deviceSelectionPanel, certificateSelectionPanel,
-                new PasswordJOptionPane(this));
+                new PasswordJOptionPane(this), signatureSelectionJPanel);
         add(optionSelectionPanel);
         pack();
     }
@@ -73,56 +76,76 @@ public class MainFrame extends JFrame implements FrameControls {
     /**
      * Initializes the options panel and builds the options layout.
      */
-    private void initOptionsLayout() {
+    private void initOptionsPanel() {
         optionSelectionPanel = new SelectingOptionJPanel(this);
     }
 
     /**
      * Initializes the signing panels and builds the singing layout.
      */
-    private void initSigningLayout() {
+    private void initSigningPanels() {
         rightLayout = new CardLayout();
         leftLayout = new CardLayout();
         deviceJPanel = new JPanel();
-        certificateJPanel = new JPanel();
+        signingJPanel = new JPanel();
         splitPaneH = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         deviceSelectionPanel = new SelectingDeviceJPanel(this, locale);
         certificateSelectionPanel = new SelectingCertificateJPanel(this, locale);
         attachListeners();
         deviceJPanel.setLayout(leftLayout);
         deviceJPanel.add(deviceSelectionPanel, deviceSelectionPanel.getClass().toString());
-        certificateJPanel.setLayout(rightLayout);
-        certificateJPanel.add(certificateSelectionPanel, certificateSelectionPanel.getClass().getName());
+        signingJPanel.setLayout(rightLayout);
+        signingJPanel.add(certificateSelectionPanel, certificateSelectionPanel.getClass().getName());
         splitPaneH.setLeftComponent(deviceJPanel);
-        splitPaneH.setRightComponent(certificateJPanel);
+        splitPaneH.setRightComponent(signingJPanel);
         splitPaneH.setDividerLocation(0.5);
         splitPaneH.setResizeWeight(0.5);
+    }
+
+    private void initSignatureSelectionPanel() {
+        signatureSelectionJPanel = new SelectingFileAndSignatureJPanel(this, locale);
     }
 
     /**
      * Hides the choose option panel and shows the panels related to signing.
      */
     @Override
-    public void showSigningLayout() {
-        this.getContentPane().remove(optionSelectionPanel);
+    public void showSigningPanel() {
+        this.getContentPane().removeAll();
         this.getContentPane().add(splitPaneH, BorderLayout.CENTER);
         pack();
         revalidate();
         repaint();
-        setVisible(true);
     }
 
     /**
      * Hides the panels related to signing and shows the choose option panel.
      */
     @Override
-    public void showChooseOptionLayout() {
-        this.getContentPane().remove(splitPaneH);
+    public void showChooseOptionPanel() {
+        this.getContentPane().removeAll();
         this.getContentPane().add(optionSelectionPanel, BorderLayout.CENTER);
         pack();
         revalidate();
         repaint();
-        setVisible(true);
+    }
+
+    @Override
+    public void showFileAndSignaturePanel() {
+        splitPaneH.remove(signingJPanel);
+        splitPaneH.setRightComponent(signatureSelectionJPanel);
+        pack();
+        revalidate();
+        repaint();
+    }
+
+    @Override
+    public void hideFileAndSignaturePanel() {
+        splitPaneH.remove(signatureSelectionJPanel);
+        splitPaneH.setRightComponent(signingJPanel);
+        pack();
+        revalidate();
+        repaint();
     }
 
     /**
@@ -195,6 +218,7 @@ public class MainFrame extends JFrame implements FrameControls {
         deviceSelectionPanel.setComponentText(locale);
         optionSelectionPanel.setComponentText(locale);
         certificateSelectionPanel.setComponentText(locale);
+        signatureSelectionJPanel.setComponentText(locale);
         LiteSignerManager.getInstance().setLocale(locale);
         setComponentText(locale);
         PasswordJOptionPane.setPaneLocale(locale);
@@ -278,4 +302,5 @@ public class MainFrame extends JFrame implements FrameControls {
             }
         });
     }
+
 }
