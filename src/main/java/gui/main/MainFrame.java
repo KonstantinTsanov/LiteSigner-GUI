@@ -28,8 +28,10 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import litesigner.callbacks.impl.PasswordJOptionPane;
 import core.LiteSignerManager;
+import gui.jpanels.SignatureVerificationJPanel;
 import gui.jpanels.SelectingCertificateJPanel;
 import gui.jpanels.SelectingFileAndSignatureJPanel;
+import java.awt.Dimension;
 
 /**
  *
@@ -47,7 +49,7 @@ public class MainFrame extends JFrame implements FrameControls {
     private SelectingCertificateJPanel certificateSelectionPanel;
     private SelectingOptionJPanel optionSelectionPanel;
     private SelectingFileAndSignatureJPanel signatureSelectionJPanel;
-
+    private SignatureVerificationJPanel signatureVerificationJPanel;
     private final JMenuBar topMenuBar;
     private JMenu fileJMenu, optionsJMenu, languageJMenu;
     private JMenuItem exitJMenuItem;
@@ -58,6 +60,7 @@ public class MainFrame extends JFrame implements FrameControls {
      * Constructor for the frame.
      */
     public MainFrame() {
+        setMinimumSize(new Dimension(300, 250));
         setLayout(new MigLayout("", "[grow,fill]", "[grow,fill]"));
         setTitle("LiteSigner");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -66,9 +69,10 @@ public class MainFrame extends JFrame implements FrameControls {
         initOptionsPanel();
         initSigningPanels();
         initSignatureSelectionPanel();
+        initSignatureVerificationPanel();
         setLanguage(locale);
         LiteSignerManager.getInstance().setComponents(deviceSelectionPanel, certificateSelectionPanel,
-                new PasswordJOptionPane(this), signatureSelectionJPanel);
+                new PasswordJOptionPane(this));
         add(optionSelectionPanel);
         pack();
     }
@@ -106,11 +110,16 @@ public class MainFrame extends JFrame implements FrameControls {
         signatureSelectionJPanel = new SelectingFileAndSignatureJPanel(this, locale);
     }
 
+    private void initSignatureVerificationPanel() {
+        signatureVerificationJPanel = new SignatureVerificationJPanel(this, locale);
+    }
+
     /**
      * Hides the choose option panel and shows the panels related to signing.
      */
     @Override
     public void showSigningPanel() {
+        setMinimumSize(new Dimension(650, 450));
         this.getContentPane().removeAll();
         this.getContentPane().add(splitPaneH, BorderLayout.CENTER);
         pack();
@@ -123,6 +132,7 @@ public class MainFrame extends JFrame implements FrameControls {
      */
     @Override
     public void showChooseOptionPanel() {
+        setMinimumSize(new Dimension(300, 250));
         this.getContentPane().removeAll();
         this.getContentPane().add(optionSelectionPanel, BorderLayout.CENTER);
         pack();
@@ -143,6 +153,16 @@ public class MainFrame extends JFrame implements FrameControls {
     public void hideFileAndSignaturePanel() {
         splitPaneH.remove(signatureSelectionJPanel);
         splitPaneH.setRightComponent(signingJPanel);
+        pack();
+        revalidate();
+        repaint();
+    }
+
+    @Override
+    public void showSignatureVerificationPanel() {
+        setMinimumSize(new Dimension(450, 350));
+        this.getContentPane().removeAll();
+        this.getContentPane().add(signatureVerificationJPanel, BorderLayout.CENTER);
         pack();
         revalidate();
         repaint();
@@ -219,6 +239,7 @@ public class MainFrame extends JFrame implements FrameControls {
         optionSelectionPanel.setComponentText(locale);
         certificateSelectionPanel.setComponentText(locale);
         signatureSelectionJPanel.setComponentText(locale);
+        signatureVerificationJPanel.setComponentText(locale);
         LiteSignerManager.getInstance().setLocale(locale);
         setComponentText(locale);
         PasswordJOptionPane.setPaneLocale(locale);
