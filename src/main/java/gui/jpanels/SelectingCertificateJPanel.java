@@ -112,7 +112,7 @@ public class SelectingCertificateJPanel extends JPanel implements CertificatePan
         certificateTable.getSelectionModel().addListSelectionListener((ListSelectionEvent lse) -> {
             if (!lse.getValueIsAdjusting()) {
                 if (certificateTable.getSelectedRow() != -1) {
-                    LiteSignerManager.getInstance().checkIfCertificateHasChain(certificateTable.getSelectedRow());
+                    LiteSignerManager.getInstance().verifySelectedCertificateFromTable(certificateTable.getSelectedRow());
                 } else {
                     ((FrameControls) parent).hideFileAndSignaturePanel();
                 }
