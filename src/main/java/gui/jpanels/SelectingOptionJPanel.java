@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
 import callbacks.FrameControls;
+import javax.swing.JFrame;
 
 /**
  *
@@ -21,11 +22,11 @@ public final class SelectingOptionJPanel extends JPanel {
 
     private JLabel chooseAnOptionJLabel;
     private JButton signFileJButton;
-    private JButton verifyFileJButton;
+    private JButton verifySignatureJButton;
 
-    private final FrameControls parent;
+    private final JFrame parent;
 
-    public SelectingOptionJPanel(FrameControls parent) {
+    public SelectingOptionJPanel(JFrame parent) {
         this.parent = parent;
         MigLayout layout = new MigLayout("", "[grow][grow]", "[grow][grow]");
         setLayout(layout);
@@ -37,27 +38,28 @@ public final class SelectingOptionJPanel extends JPanel {
     private void initComponents() {
         chooseAnOptionJLabel = new JLabel();
         signFileJButton = new JButton();
-        verifyFileJButton = new JButton();
+        verifySignatureJButton = new JButton();
     }
 
     private void addComponents() {
         add(chooseAnOptionJLabel, "span");
         add(signFileJButton, "grow,span,wrap");
-        add(verifyFileJButton, "grow,span,wrap");
+        add(verifySignatureJButton, "grow,span,wrap");
     }
 
     public void setComponentText(Locale locale) {
         ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
         chooseAnOptionJLabel.setText(r.getString("chooseAnOptionJPanel.chooseAnOptionJLabel"));
         signFileJButton.setText(r.getString("chooseAnOptionJPanel.signFileJButton"));
-        verifyFileJButton.setText(r.getString("chooseAnOptionJPanel.verifyFileJButton"));
+        verifySignatureJButton.setText(r.getString("chooseAnOptionJPanel.verifySignatureJButton"));
     }
 
     private void attachListeners() {
         signFileJButton.addActionListener((al) -> {
-            parent.showSigningPanel();
+            ((FrameControls) parent).showSigningPanel();
         });
-        verifyFileJButton.addActionListener((al) -> {
+        verifySignatureJButton.addActionListener((al) -> {
+            ((FrameControls) parent).showSignatureVerificationPanel();
         });
     }
 }
