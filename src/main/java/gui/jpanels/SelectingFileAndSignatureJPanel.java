@@ -5,28 +5,31 @@
  */
 package gui.jpanels;
 
-import callbacks.FileCallback;
 import callbacks.FrameControls;
+import core.LiteSignerManager;
+import enums.SignatureType;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
+import org.apache.commons.validator.routines.UrlValidator;
 
 /**
  *
  * @author Konstantin Tsanov <k.tsanov@gmail.com>
  */
-public class SelectingFileAndSignatureJPanel extends JPanel implements FileCallback {
+public class SelectingFileAndSignatureJPanel extends JPanel {
 
     private JLabel signatureTypeJLabel;
     private JRadioButton attachedSignature;
@@ -45,6 +48,9 @@ public class SelectingFileAndSignatureJPanel extends JPanel implements FileCallb
     private JTextField outputFilePath;
     private JButton selectInputFileButton;
     private JButton selectOutputLocationButton;
+    private JTextField outputExtension;
+    private JCheckBox timestampCheckBox;
+    private JTextField tsaUrlTextField;
 
     private final JFrame parent;
     private Locale locale;
@@ -52,41 +58,45 @@ public class SelectingFileAndSignatureJPanel extends JPanel implements FileCallb
     public SelectingFileAndSignatureJPanel(JFrame parent, Locale locale) {
         this.locale = locale;
         this.parent = parent;
-        MigLayout layout = new MigLayout("", "[grow][grow][grow]", "[shrink 0][shrink 0][shrink 0][shrink 0][shrink 0][shrink 0][grow]");
+        MigLayout layout = new MigLayout("", "[grow][grow][grow]", "[shrink 0][shrink 0][shrink 0][shrink 0][shrink 0][shrink 0][shrink 0][grow]");
         setLayout(layout);
         initComponents();
-        attachListeners();
         addComponents();
+        attachListeners();
     }
 
     private void initComponents() {
         signatureTypeJLabel = new JLabel();
         attachedSignature = new JRadioButton();
+        attachedSignature.setActionCommand(".p7m");
         detachedSignature = new JRadioButton();
+        detachedSignature.setActionCommand(".p7s");
         pdfFile = new JRadioButton();
+        pdfFile.setActionCommand("");
         signatureButtonsGroup = new ButtonGroup();
         signatureButtonsGroup.add(attachedSignature);
         signatureButtonsGroup.add(detachedSignature);
         signatureButtonsGroup.add(pdfFile);
-
         backButton = new JButton();
         signButton = new JButton();
-
+        outputExtension = new JTextField();
+        outputExtension.setEditable(false);
         inputFile = new JFileChooser();
         inputFile.setFileSelectionMode(JFileChooser.FILES_ONLY);
         //inputFile.setCurrentDirectory(new File(System.getProperty("user.name")));
-
         inputFileLabel = new JLabel();
         outputFileLabel = new JLabel();
         outputLocation = new JFileChooser();
         outputLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
         inputFilePath = new JTextField();
         inputFilePath.setEditable(false);
         outputFilePath = new JTextField();
         outputFilePath.setEditable(false);
         selectInputFileButton = new JButton("...");
         selectOutputLocationButton = new JButton("...");
+        timestampCheckBox = new JCheckBox();
+        tsaUrlTextField = new JTextField();
+        tsaUrlTextField.setEnabled(false);
     }
 
     private void addComponents() {
@@ -99,12 +109,16 @@ public class SelectingFileAndSignatureJPanel extends JPanel implements FileCallb
         add(selectInputFileButton, "wrap");
         add(outputFileLabel, "wrap");
         add(outputFilePath, "growx, span 3");
+        add(outputExtension, "growx, wmin 40");
         add(selectOutputLocationButton, "wrap");
+        add(timestampCheckBox, "span 1");
+        add(tsaUrlTextField, "wrap, span, growx");
         add(backButton, "south, left");
         add(signButton, "south, right, wrap");
     }
 
     public void setComponentText(Locale locale) {
+        this.locale = locale;
         ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
         inputFileLabel.setText(r.getString("selectingFileAndSignatureJPanel.inputFileLabel"));
         outputFileLabel.setText(r.getString("selectingFileAndSignatureJPanel.outputFileLabel"));
@@ -114,6 +128,7 @@ public class SelectingFileAndSignatureJPanel extends JPanel implements FileCallb
         pdfFile.setText(r.getString("selectingFileAndSignatureJPanel.pdfFile"));
         backButton.setText(r.getString("selectingFileAndSignatureJPanel.backButton"));
         signButton.setText(r.getString("selectingFileAndSignatureJPanel.signButton"));
+        timestampCheckBox.setText(r.getString("selectingFileAndSignatureJPanel.timestampCheckBox"));
         repaint();
     }
 
@@ -122,14 +137,31 @@ public class SelectingFileAndSignatureJPanel extends JPanel implements FileCallb
             ((FrameControls) parent).hideFileAndSignaturePanel();
         });
         signButton.addActionListener((ActionEvent ae) -> {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            if (signatureButtonsGroup.getSelection() == null) {
+                ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
+                JOptionPane.showMessageDialog(parent, r.getString("selectingFileAndSignatureJPanel.signatureTypeError"),
+                        r.getString("errorMessage.title"), JOptionPane.ERROR_MESSAGE);
+            } else if (inputFile.getSelectedFile() == null) {
+                ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
+                JOptionPane.showMessageDialog(parent, r.getString("selectingFileAndSignatureJPanel.inputFileNotSelected"),
+                        r.getString("errorMessage.title"), JOptionPane.ERROR_MESSAGE);
+            } else if (timestampCheckBox.isSelected() && (tsaUrlTextField.getText().isEmpty() || validateURL(tsaUrlTextField.getText()) == false)) {
+                ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
+                JOptionPane.showMessageDialog(parent, r.getString("selectingFileAndSignatureJPanel.tsaUrlNotPresentError"),
+                        r.getString("errorMessage.title"), JOptionPane.ERROR_MESSAGE);
+            } else {
+                LiteSignerManager.getInstance().signFile(
+                        attachedSignature.isSelected() ? SignatureType.Attached : detachedSignature.isSelected() ? SignatureType.Detached : SignatureType.Pdf,
+                        inputFile.getSelectedFile(),
+                        new File(outputLocation.getSelectedFile().toString().concat(outputExtension.getText())), timestampCheckBox.isSelected() ? tsaUrlTextField.getText() : null);
+            }
         });
         selectInputFileButton.addActionListener((ActionEvent ae) -> {
             int result = inputFile.showOpenDialog(parent);
             if (result == JFileChooser.APPROVE_OPTION) {
                 inputFilePath.setText(inputFile.getSelectedFile().toString());
-                outputLocation.setSelectedFile(new File(inputFile.getCurrentDirectory().getAbsolutePath()));
-                outputFilePath.setText(inputFile.getCurrentDirectory().getAbsolutePath());
+                outputLocation.setSelectedFile(inputFile.getSelectedFile());
+                outputFilePath.setText(inputFile.getSelectedFile().toString());
             } else {
 //todo
             }
@@ -142,15 +174,34 @@ public class SelectingFileAndSignatureJPanel extends JPanel implements FileCallb
 //todo
             }
         });
+        timestampCheckBox.addActionListener((ae) -> {
+            if (timestampCheckBox.isSelected() == true) {
+                tsaUrlTextField.setEnabled(true);
+            } else {
+                tsaUrlTextField.setEnabled(false);
+            }
+        });
+        attachedSignature.addActionListener((ae) -> {
+            outputExtension.setText(attachedSignature.getActionCommand());
+        });
+        detachedSignature.addActionListener((ae) -> {
+            outputExtension.setText(detachedSignature.getActionCommand());
+        });
+        pdfFile.addActionListener((ae) -> {
+            outputExtension.setText(pdfFile.getActionCommand());
+        });
     }
 
-    @Override
     public File getInputFile() {
         return inputFile.getSelectedFile();
     }
 
-    @Override
     public File getOutputFile() {
         return outputLocation.getSelectedFile();
+    }
+
+    private boolean validateURL(String url) {
+        UrlValidator urlValidator = new UrlValidator();
+        return urlValidator.isValid(url);
     }
 }
