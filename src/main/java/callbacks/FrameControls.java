@@ -18,4 +18,6 @@ public interface FrameControls {
     public void showFileAndSignaturePanel();
 
     public void hideFileAndSignaturePanel();
+
+    public void showSignatureVerificationPanel();
 }
