@@ -32,7 +32,7 @@ public class PasswordJOptionPane extends JOptionPane implements PasswordCallback
     }
 
     @Override
-    public char[] getPassword() {
+    public char[] getPin() {
         ResourceBundle r = ResourceBundle.getBundle("Bundle", _locale);
         String messageTitle = r.getString("passwordJOptionPane.messageTitle");
         JPasswordField password = new JPasswordField();
