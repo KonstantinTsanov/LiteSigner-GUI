@@ -6,31 +6,41 @@
 package gui.jpanels;
 
 import callbacks.FrameControls;
-import java.awt.Dimension;
+import callbacks.SignatureVerificationPanel;
+import core.LiteSignerManager;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
+import tools.FilesTool;
 
 /**
  *
  * @author Konstantin Tsanov <k.tsanov@gmail.com>
  */
-public class SignatureVerificationJPanel extends JPanel {
+public class SignatureVerificationJPanel extends JPanel implements SignatureVerificationPanel {
 
     private JLabel selectFileLabel;
-    private JTextField inputFileLocation;
-    private JFileChooser inputFile;
-    private JButton selectFileButton;
+
+    private JTextField pkcs7;
+    private JFileChooser pkcs7Chooser;
+    private JButton pkcs7Button;
+
+    private JLabel selectSignedFileLabel;
+    private JTextField signedFile;
+    private JFileChooser signedFileChooser;
+    private JButton selectSignedFileButton;
 
     JTextArea signatureInformation;
 
+    private JButton validateButton;
     private JButton backButton;
     private final JFrame parent;
     private Locale locale;
@@ -38,7 +48,7 @@ public class SignatureVerificationJPanel extends JPanel {
     public SignatureVerificationJPanel(JFrame parent, Locale locale) {
         this.parent = parent;
         this.locale = locale;
-        MigLayout layout = new MigLayout("", "[grow][shrink 0]", "[shrink 0][shrink 0][grow][shrink 0]");
+        MigLayout layout = new MigLayout("", "[grow][shrink 0]", "[shrink 0][shrink 0][shrink 0][shrink 0][grow][shrink 0]");
         setLayout(layout);
         initComponents();
         addComponents();
@@ -46,41 +56,88 @@ public class SignatureVerificationJPanel extends JPanel {
     }
 
     private void initComponents() {
+        //First field
         selectFileLabel = new JLabel();
-        inputFileLocation = new JTextField();
-        inputFileLocation.setEditable(false);
-        inputFile = new JFileChooser();
-        selectFileButton = new JButton("...");
-
+        pkcs7 = new JTextField();
+        pkcs7.setEditable(false);
+        pkcs7Chooser = new JFileChooser();
+        pkcs7Chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        pkcs7Button = new JButton("...");
+        //Second field
+        selectSignedFileLabel = new JLabel();
+        signedFile = new JTextField();
+        signedFile.setEditable(false);
+        signedFileChooser = new JFileChooser();
+        signedFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        selectSignedFileButton = new JButton("...");
+        //Signature information
         signatureInformation = new JTextArea();
-
+        signatureInformation.setLineWrap(true);
+        validateButton = new JButton();
         backButton = new JButton();
     }
 
     private void addComponents() {
         add(selectFileLabel, "wrap");
-        add(inputFileLocation, "growx");
-        add(selectFileButton, "wrap");
+        add(pkcs7, "growx");
+        add(pkcs7Button, "wrap");
+        add(selectSignedFileLabel, "wrap");
+        add(signedFile, "growx");
+        add(selectSignedFileButton, "wrap");
         add(signatureInformation, "span, growx, growy, wrap");
+        add(validateButton, "dock south");
         add(backButton, "dock south");
     }
 
     public void setComponentText(Locale locale) {
         this.locale = locale;
         ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
-        selectFileLabel.setText(r.getString("fileSignatureVerificationJPanel.selectFileLabel"));
+        selectFileLabel.setText(r.getString("fileSignatureVerificationJPanel.selectSignatureOrAttachedFileLabel"));
+        selectSignedFileLabel.setText(r.getString("fileSignatureVerificationJPanel.selectSignedFileLabel"));
+        validateButton.setText(r.getString("signatureVerificationJPanel.validateButton"));
         backButton.setText(r.getString("fileSignatureVerificationJPanel.backButton"));
     }
 
     public void attachListeners() {
-        selectFileButton.addActionListener((ae) -> {
-            int result = inputFile.showOpenDialog(parent);
+        pkcs7Button.addActionListener((ae) -> {
+            int result = pkcs7Chooser.showOpenDialog(parent);
             if (result == JFileChooser.APPROVE_OPTION) {
-                inputFileLocation.setText(inputFile.getSelectedFile().toString());
+                if (FilesTool.checkIfFileExists(pkcs7Chooser.getSelectedFile())) {
+                    pkcs7.setText(pkcs7Chooser.getSelectedFile().toString());
+                } else {
+                    ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
+                    JOptionPane.showMessageDialog(parent, r.getString("fileSignatureVerificationJPanel.selectedFileDoesNotExist"),
+                            r.getString("errorMessage.title"), JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+        selectSignedFileButton.addActionListener((ae) -> {
+            int result = signedFileChooser.showOpenDialog(parent);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                if (FilesTool.checkIfFileExists(signedFileChooser.getSelectedFile())) {
+                    signedFile.setText(signedFileChooser.getSelectedFile().toString());
+                } else {
+                    ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
+                    JOptionPane.showMessageDialog(parent, r.getString("fileSignatureVerificationJPanel.selectedFileDoesNotExist"),
+                            r.getString("errorMessage.title"), JOptionPane.WARNING_MESSAGE);
+                }
             }
         });
         backButton.addActionListener((ae) -> {
             ((FrameControls) parent).showChooseOptionPanel();
         });
+        validateButton.addActionListener((ae) -> {
+            LiteSignerManager.getInstance().validateSignature(pkcs7Chooser.getSelectedFile(), signedFileChooser.getSelectedFile());
+        });
+    }
+
+    @Override
+    public JTextArea getSignatureDetailsJTextArea() {
+        return signatureInformation;
+    }
+
+    @Override
+    public JFrame getPanelParent() {
+        return parent;
     }
 }
