@@ -72,7 +72,7 @@ public class MainFrame extends JFrame implements FrameControls {
         initSignatureVerificationPanel();
         setLanguage(locale);
         LiteSignerManager.getInstance().setComponents(deviceSelectionPanel, certificateSelectionPanel,
-                new PasswordJOptionPane(this));
+                new PasswordJOptionPane(this), signatureVerificationJPanel);
         add(optionSelectionPanel);
         pack();
     }
