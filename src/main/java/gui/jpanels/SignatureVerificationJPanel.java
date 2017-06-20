@@ -26,8 +26,9 @@ package gui.jpanels;
 import callbacks.FrameControls;
 import callbacks.SignatureVerificationPanel;
 import core.LiteSignerManager;
-import java.util.Locale;
 import java.util.ResourceBundle;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -58,13 +59,14 @@ public class SignatureVerificationJPanel extends JPanel implements SignatureVeri
 
     JTextArea signatureInformation;
 
+    private JButton clearAllButton;
     private JButton validateButton;
     private JButton backButton;
     private final JFrame parent;
 
     public SignatureVerificationJPanel(JFrame parent) {
         this.parent = parent;
-        MigLayout layout = new MigLayout("", "[grow][grow]", "[shrink 0][shrink 0][shrink 0][shrink 0][grow][shrink 0]");
+        MigLayout layout = new MigLayout("", "[grow][grow]", "[shrink 0][shrink 0][shrink 0][shrink 0][grow][shrink 0][shrink 0]");
         setLayout(layout);
         initComponents();
         addComponents();
@@ -89,6 +91,7 @@ public class SignatureVerificationJPanel extends JPanel implements SignatureVeri
         //Signature information
         signatureInformation = new JTextArea();
         signatureInformation.setLineWrap(true);
+        clearAllButton = new JButton(new ImageIcon(getClass().getResource("/images/clear-list.png")));
         validateButton = new JButton();
         backButton = new JButton();
     }
@@ -101,8 +104,9 @@ public class SignatureVerificationJPanel extends JPanel implements SignatureVeri
         add(signedFile, "growx");
         add(selectSignedFileButton, "wrap");
         add(signatureInformation, "span, growx, growy, wrap,wmin 10");
+        add(validateButton, "span, center, wrap, wmin 250");
+        add(clearAllButton, "span, center, wrap");
         add(backButton, "south");
-        add(validateButton, "south");
     }
 
     public void setComponentText() {
@@ -111,6 +115,7 @@ public class SignatureVerificationJPanel extends JPanel implements SignatureVeri
         selectSignedFileLabel.setText(r.getString("fileSignatureVerificationJPanel.selectSignedFileLabel"));
         validateButton.setText(r.getString("signatureVerificationJPanel.validateButton"));
         backButton.setText(r.getString("fileSignatureVerificationJPanel.backButton"));
+        clearAllButton.setToolTipText(r.getString("signatureVerificationJPanel.clearWindow"));
     }
 
     public void attachListeners() {
@@ -139,6 +144,13 @@ public class SignatureVerificationJPanel extends JPanel implements SignatureVeri
             } else {
                 signedFileChooser.setSelectedFile(null);
             }
+        });
+        clearAllButton.addActionListener((ae) -> {
+            pkcs7.setText(null);
+            pkcs7Chooser.setSelectedFile(null);
+            signedFile.setText(null);
+            signedFileChooser.setSelectedFile(null);
+            signatureInformation.setText(null);
         });
         validateButton.addActionListener((ae) -> {
             if (pkcs7Chooser.getSelectedFile() == null) {

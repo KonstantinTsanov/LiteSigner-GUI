@@ -50,8 +50,7 @@ import gui.jpanels.SelectingCertificateJPanel;
 import gui.jpanels.SelectingFileAndSignatureJPanel;
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import signers.Pkcs7;
-import tools.CertificateVerifier;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -180,7 +179,7 @@ public class MainFrame extends JFrame implements FrameControls {
 
     @Override
     public void showSignatureVerificationPanel() {
-        setMinimumSize(new Dimension(550, 350));
+        setMinimumSize(new Dimension(550, 400));
         this.getContentPane().removeAll();
         this.getContentPane().add(signatureVerificationJPanel, BorderLayout.CENTER);
         pack();
@@ -237,10 +236,12 @@ public class MainFrame extends JFrame implements FrameControls {
         for (Languages lang : Languages.values()) {
             JMenuItem language = new JMenuItem(lang.getName());
             language.addActionListener((ActionEvent ActionEvent) -> {
-                if (getLocaleFromPreferences() != lang.getLocale()) {
+                if (!getLocaleFromPreferences().getCountry().equals(lang.getLocale().getCountry())
+                        && !getLocaleFromPreferences().getLanguage().equals(lang.getLocale().getLanguage())) {
                     setLanguage(lang.getLocale());
                     setLocaleToPreferences(lang);
                     pack();
+                    JOptionPane.showMessageDialog(this, ResourceBundle.getBundle("Bundle").getString("MainFrame.restartMessage"));
                 }
             });
             languageJMenu.add(language);
