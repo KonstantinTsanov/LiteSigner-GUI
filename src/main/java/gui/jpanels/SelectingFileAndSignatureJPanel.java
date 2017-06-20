@@ -42,8 +42,8 @@ public class SelectingFileAndSignatureJPanel extends JPanel {
 
     private JLabel inputFileLabel;
     private JLabel outputFileLabel;
-    private JFileChooser inputFile;
-    private JFileChooser outputLocation;
+    private JFileChooser fileToBeSignedChooser;
+    private JFileChooser outputLocationChooser;
     private JTextField inputFilePath;
     private JTextField outputFilePath;
     private JButton selectInputFileButton;
@@ -81,13 +81,13 @@ public class SelectingFileAndSignatureJPanel extends JPanel {
         signButton = new JButton();
         outputExtension = new JTextField();
         outputExtension.setEditable(false);
-        inputFile = new JFileChooser();
-        inputFile.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileToBeSignedChooser = new JFileChooser();
+        fileToBeSignedChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         //inputFile.setCurrentDirectory(new File(System.getProperty("user.name")));
         inputFileLabel = new JLabel();
         outputFileLabel = new JLabel();
-        outputLocation = new JFileChooser();
-        outputLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        outputLocationChooser = new JFileChooser();
+        outputLocationChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         inputFilePath = new JTextField();
         inputFilePath.setEditable(false);
         outputFilePath = new JTextField();
@@ -141,7 +141,7 @@ public class SelectingFileAndSignatureJPanel extends JPanel {
                 ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
                 JOptionPane.showMessageDialog(parent, r.getString("selectingFileAndSignatureJPanel.signatureTypeError"),
                         r.getString("errorMessage.title"), JOptionPane.ERROR_MESSAGE);
-            } else if (inputFile.getSelectedFile() == null) {
+            } else if (fileToBeSignedChooser.getSelectedFile() == null) {
                 ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
                 JOptionPane.showMessageDialog(parent, r.getString("selectingFileAndSignatureJPanel.inputFileNotSelected"),
                         r.getString("errorMessage.title"), JOptionPane.ERROR_MESSAGE);
@@ -150,28 +150,27 @@ public class SelectingFileAndSignatureJPanel extends JPanel {
                 JOptionPane.showMessageDialog(parent, r.getString("selectingFileAndSignatureJPanel.tsaUrlNotPresentError"),
                         r.getString("errorMessage.title"), JOptionPane.ERROR_MESSAGE);
             } else {
-                LiteSignerManager.getInstance().signFile(
-                        attachedSignature.isSelected() ? SignatureType.Attached : detachedSignature.isSelected() ? SignatureType.Detached : SignatureType.Pdf,
-                        inputFile.getSelectedFile(),
-                        new File(outputLocation.getSelectedFile().toString().concat(outputExtension.getText())), timestampCheckBox.isSelected() ? tsaUrlTextField.getText() : null);
+                LiteSignerManager.getInstance().signFile(attachedSignature.isSelected() ? SignatureType.Attached : detachedSignature.isSelected() ? SignatureType.Detached : SignatureType.Pdf,
+                        fileToBeSignedChooser.getSelectedFile(),
+                        new File(outputLocationChooser.getSelectedFile().toString().concat(outputExtension.getText())), timestampCheckBox.isSelected() ? tsaUrlTextField.getText() : null);
             }
         });
         selectInputFileButton.addActionListener((ActionEvent ae) -> {
-            int result = inputFile.showOpenDialog(parent);
+            int result = fileToBeSignedChooser.showOpenDialog(parent);
             if (result == JFileChooser.APPROVE_OPTION) {
-                inputFilePath.setText(inputFile.getSelectedFile().toString());
-                outputLocation.setSelectedFile(inputFile.getSelectedFile());
-                outputFilePath.setText(inputFile.getSelectedFile().toString());
+                inputFilePath.setText(fileToBeSignedChooser.getSelectedFile().toString());
+                outputLocationChooser.setSelectedFile(fileToBeSignedChooser.getSelectedFile());
+                outputFilePath.setText(fileToBeSignedChooser.getSelectedFile().toString());
             } else {
-//todo
+                fileToBeSignedChooser.setSelectedFile(null);
             }
         });
         selectOutputLocationButton.addActionListener((ActionEvent ae) -> {
-            int result = outputLocation.showOpenDialog(parent);
+            int result = outputLocationChooser.showOpenDialog(parent);
             if (result == JFileChooser.APPROVE_OPTION) {
-                outputFilePath.setText(outputLocation.getSelectedFile().toString());
+                outputFilePath.setText(outputLocationChooser.getSelectedFile().toString());
             } else {
-//todo
+                outputLocationChooser.setSelectedFile(null);
             }
         });
         timestampCheckBox.addActionListener((ae) -> {
@@ -193,11 +192,11 @@ public class SelectingFileAndSignatureJPanel extends JPanel {
     }
 
     public File getInputFile() {
-        return inputFile.getSelectedFile();
+        return fileToBeSignedChooser.getSelectedFile();
     }
 
     public File getOutputFile() {
-        return outputLocation.getSelectedFile();
+        return outputLocationChooser.getSelectedFile();
     }
 
     private boolean validateURL(String url) {
