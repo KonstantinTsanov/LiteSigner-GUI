@@ -48,7 +48,7 @@ public class SignatureVerificationJPanel extends JPanel implements SignatureVeri
     public SignatureVerificationJPanel(JFrame parent, Locale locale) {
         this.parent = parent;
         this.locale = locale;
-        MigLayout layout = new MigLayout("", "[grow][shrink 0]", "[shrink 0][shrink 0][shrink 0][shrink 0][grow][shrink 0]");
+        MigLayout layout = new MigLayout("", "[grow][grow]", "[shrink 0][shrink 0][shrink 0][shrink 0][grow][shrink 0]");
         setLayout(layout);
         initComponents();
         addComponents();
@@ -84,9 +84,9 @@ public class SignatureVerificationJPanel extends JPanel implements SignatureVeri
         add(selectSignedFileLabel, "wrap");
         add(signedFile, "growx");
         add(selectSignedFileButton, "wrap");
-        add(signatureInformation, "span, growx, growy, wrap");
-        add(validateButton, "dock south");
-        add(backButton, "dock south");
+        add(signatureInformation, "span, growx, growy, wrap,wmin 10");
+        add(backButton, "south");
+        add(validateButton, "south");
     }
 
     public void setComponentText(Locale locale) {
@@ -121,6 +121,8 @@ public class SignatureVerificationJPanel extends JPanel implements SignatureVeri
                     JOptionPane.showMessageDialog(parent, r.getString("fileSignatureVerificationJPanel.selectedFileDoesNotExist"),
                             r.getString("errorMessage.title"), JOptionPane.WARNING_MESSAGE);
                 }
+            } else {
+                signedFileChooser.setSelectedFile(null);
             }
         });
         backButton.addActionListener((ae) -> {
