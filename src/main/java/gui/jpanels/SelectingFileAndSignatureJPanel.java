@@ -71,10 +71,8 @@ public class SelectingFileAndSignatureJPanel extends JPanel {
     private JTextField tsaUrlTextField;
 
     private final JFrame parent;
-    private Locale locale;
 
-    public SelectingFileAndSignatureJPanel(JFrame parent, Locale locale) {
-        this.locale = locale;
+    public SelectingFileAndSignatureJPanel(JFrame parent) {
         this.parent = parent;
         MigLayout layout = new MigLayout("", "[grow][grow][grow]", "[shrink 0][shrink 0][shrink 0][shrink 0][shrink 0][shrink 0][shrink 0][grow]");
         setLayout(layout);
@@ -135,9 +133,8 @@ public class SelectingFileAndSignatureJPanel extends JPanel {
         add(signButton, "south, right, wrap");
     }
 
-    public void setComponentText(Locale locale) {
-        this.locale = locale;
-        ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
+    public void setComponentText() {
+        ResourceBundle r = ResourceBundle.getBundle("Bundle");
         inputFileLabel.setText(r.getString("selectingFileAndSignatureJPanel.inputFileLabel"));
         outputFileLabel.setText(r.getString("selectingFileAndSignatureJPanel.outputFileLabel"));
         signatureTypeJLabel.setText(r.getString("selectingFileAndSignatureJPanel.signatureTypeJLabel"));
@@ -156,15 +153,15 @@ public class SelectingFileAndSignatureJPanel extends JPanel {
         });
         signButton.addActionListener((ActionEvent ae) -> {
             if (signatureButtonsGroup.getSelection() == null) {
-                ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
+                ResourceBundle r = ResourceBundle.getBundle("Bundle");
                 JOptionPane.showMessageDialog(parent, r.getString("selectingFileAndSignatureJPanel.signatureTypeError"),
                         r.getString("errorMessage.title"), JOptionPane.ERROR_MESSAGE);
             } else if (fileToBeSignedChooser.getSelectedFile() == null) {
-                ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
+                ResourceBundle r = ResourceBundle.getBundle("Bundle");
                 JOptionPane.showMessageDialog(parent, r.getString("selectingFileAndSignatureJPanel.inputFileNotSelected"),
                         r.getString("errorMessage.title"), JOptionPane.ERROR_MESSAGE);
             } else if (timestampCheckBox.isSelected() && (tsaUrlTextField.getText().isEmpty() || validateURL(tsaUrlTextField.getText()) == false)) {
-                ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
+                ResourceBundle r = ResourceBundle.getBundle("Bundle");
                 JOptionPane.showMessageDialog(parent, r.getString("selectingFileAndSignatureJPanel.tsaUrlNotPresentError"),
                         r.getString("errorMessage.title"), JOptionPane.ERROR_MESSAGE);
             } else {

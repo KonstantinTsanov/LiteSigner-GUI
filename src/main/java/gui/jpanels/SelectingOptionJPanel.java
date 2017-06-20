@@ -65,8 +65,8 @@ public final class SelectingOptionJPanel extends JPanel {
         add(verifySignatureJButton, "grow,span,wrap");
     }
 
-    public void setComponentText(Locale locale) {
-        ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
+    public void setComponentText() {
+        ResourceBundle r = ResourceBundle.getBundle("Bundle");
         chooseAnOptionJLabel.setText(r.getString("chooseAnOptionJPanel.chooseAnOptionJLabel"));
         signFileJButton.setText(r.getString("chooseAnOptionJPanel.signFileJButton"));
         verifySignatureJButton.setText(r.getString("chooseAnOptionJPanel.verifySignatureJButton"));

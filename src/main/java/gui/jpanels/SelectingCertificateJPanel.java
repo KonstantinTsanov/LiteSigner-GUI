@@ -28,8 +28,6 @@ import callbacks.FrameControls;
 import core.LiteSignerManager;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -56,11 +54,9 @@ public class SelectingCertificateJPanel extends JPanel implements CertificatePan
     private JScrollPane certificateScrollPane;
     private JButton nextButton;
     private final JFrame parent;
-    private Locale locale;
 
-    public SelectingCertificateJPanel(JFrame parent, Locale locale) {
+    public SelectingCertificateJPanel(JFrame parent) {
         this.parent = parent;
-        this.locale = locale;
         MigLayout layout = new MigLayout("", "[grow]", "[shrink 0][grow][shrink 0]");
         setLayout(layout);
         initCertificateModel();
@@ -95,7 +91,7 @@ public class SelectingCertificateJPanel extends JPanel implements CertificatePan
 
     private void initCertificateModel() {
         certificateModel = new DefaultTableModel() {
-            ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
+            ResourceBundle r = ResourceBundle.getBundle("Bundle");
             String[] certProps = {r.getString("selectingCertificateJPanel.owner"),
                 r.getString("selectingCertificateJPanel.publisher"),
                 r.getString("selectingCertificateJPanel.validFrom")};
@@ -114,9 +110,8 @@ public class SelectingCertificateJPanel extends JPanel implements CertificatePan
         repaint();
     }
 
-    public void setComponentText(Locale locale) {
-        this.locale = locale;
-        ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
+    public void setComponentText() {
+        ResourceBundle r = ResourceBundle.getBundle("Bundle");
         selectingCertificateJLabel.setText(r.getString("selectingCertificateJPanel.label"));
         nextButton.setText(r.getString("selectingCertificateJPanel.nextButton"));
         TableColumnModel thm = certificateTable.getTableHeader().getColumnModel();
@@ -136,16 +131,13 @@ public class SelectingCertificateJPanel extends JPanel implements CertificatePan
                 }
             }
         });
-        nextButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                if (certificateTable.getSelectedRow() != -1) {
-                    ((FrameControls) parent).showFileAndSignaturePanel();
-                } else {
-                    ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
-                    JOptionPane.showMessageDialog(parent, r.getString("selectingCertificateJPanel.noCertificateSelectedError"),
-                            r.getString("errorMessage.title"), JOptionPane.WARNING_MESSAGE);
-                }
+        nextButton.addActionListener((ActionEvent ae) -> {
+            if (certificateTable.getSelectedRow() != -1) {
+                ((FrameControls) parent).showFileAndSignaturePanel();
+            } else {
+                ResourceBundle r = ResourceBundle.getBundle("Bundle");
+                JOptionPane.showMessageDialog(parent, r.getString("selectingCertificateJPanel.noCertificateSelectedError"),
+                        r.getString("errorMessage.title"), JOptionPane.WARNING_MESSAGE);
             }
         });
     }

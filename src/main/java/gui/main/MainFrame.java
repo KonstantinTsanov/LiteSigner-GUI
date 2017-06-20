@@ -26,7 +26,6 @@ package gui.main;
 import gui.jpanels.SelectingOptionJPanel;
 import gui.jpanels.SelectingDeviceJPanel;
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -49,6 +48,7 @@ import core.LiteSignerManager;
 import gui.jpanels.SignatureVerificationJPanel;
 import gui.jpanels.SelectingCertificateJPanel;
 import gui.jpanels.SelectingFileAndSignatureJPanel;
+import java.awt.CardLayout;
 import java.awt.Dimension;
 import signers.Pkcs7;
 import tools.CertificateVerifier;
@@ -60,6 +60,7 @@ import tools.CertificateVerifier;
 @Log
 public class MainFrame extends JFrame implements FrameControls {
 
+    private CardLayout rightLayout, leftLayout;
     private JPanel signingJPanel, deviceJPanel;
 
     private JSplitPane splitPaneH;
@@ -107,13 +108,17 @@ public class MainFrame extends JFrame implements FrameControls {
      * Initializes the signing panels and builds the singing layout.
      */
     private void initSigningPanels() {
+        rightLayout = new CardLayout();
+        leftLayout = new CardLayout();
         deviceJPanel = new JPanel();
         signingJPanel = new JPanel();
         splitPaneH = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        deviceSelectionPanel = new SelectingDeviceJPanel(this, locale);
-        certificateSelectionPanel = new SelectingCertificateJPanel(this, locale);
+        deviceSelectionPanel = new SelectingDeviceJPanel(this);
+        certificateSelectionPanel = new SelectingCertificateJPanel(this);
         attachListeners();
+        deviceJPanel.setLayout(leftLayout);
         deviceJPanel.add(deviceSelectionPanel, deviceSelectionPanel.getClass().toString());
+        signingJPanel.setLayout(rightLayout);
         signingJPanel.add(certificateSelectionPanel, certificateSelectionPanel.getClass().getName());
         splitPaneH.setLeftComponent(deviceJPanel);
         splitPaneH.setRightComponent(signingJPanel);
@@ -122,11 +127,11 @@ public class MainFrame extends JFrame implements FrameControls {
     }
 
     private void initSignatureSelectionPanel() {
-        signatureSelectionJPanel = new SelectingFileAndSignatureJPanel(this, locale);
+        signatureSelectionJPanel = new SelectingFileAndSignatureJPanel(this);
     }
 
     private void initSignatureVerificationPanel() {
-        signatureVerificationJPanel = new SignatureVerificationJPanel(this, locale);
+        signatureVerificationJPanel = new SignatureVerificationJPanel(this);
     }
 
     /**
@@ -250,16 +255,13 @@ public class MainFrame extends JFrame implements FrameControls {
      * @param locale Language to be used.
      */
     private void setLanguage(Locale locale) {
-        deviceSelectionPanel.setComponentText(locale);
-        optionSelectionPanel.setComponentText(locale);
-        certificateSelectionPanel.setComponentText(locale);
-        signatureSelectionJPanel.setComponentText(locale);
-        signatureVerificationJPanel.setComponentText(locale);
-        LiteSignerManager.getInstance().setLocale(locale);
-        setComponentText(locale);
-        PasswordJOptionPane.setPaneLocale(locale);
-        Pkcs7.setLocale(locale);
-        CertificateVerifier.setLocale(locale);
+        Locale.setDefault(locale);
+        deviceSelectionPanel.setComponentText();
+        optionSelectionPanel.setComponentText();
+        certificateSelectionPanel.setComponentText();
+        signatureSelectionJPanel.setComponentText();
+        signatureVerificationJPanel.setComponentText();
+        setComponentText();
     }
 
     /**
@@ -294,8 +296,8 @@ public class MainFrame extends JFrame implements FrameControls {
      *
      * @param locale
      */
-    private void setComponentText(Locale locale) {
-        ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
+    private void setComponentText() {
+        ResourceBundle r = ResourceBundle.getBundle("Bundle");
         fileJMenu.setText(r.getString("MainFrame.optionsMenu.fileJMenu"));
         exitJMenuItem.setText(r.getString("MainFrame.optionsMenu.exitJMenuItem"));
         optionsJMenu.setText(r.getString("MainFrame.optionsMenu.optionsJMenu"));

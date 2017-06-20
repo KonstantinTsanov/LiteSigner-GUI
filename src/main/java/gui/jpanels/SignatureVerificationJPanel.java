@@ -61,11 +61,9 @@ public class SignatureVerificationJPanel extends JPanel implements SignatureVeri
     private JButton validateButton;
     private JButton backButton;
     private final JFrame parent;
-    private Locale locale;
 
-    public SignatureVerificationJPanel(JFrame parent, Locale locale) {
+    public SignatureVerificationJPanel(JFrame parent) {
         this.parent = parent;
-        this.locale = locale;
         MigLayout layout = new MigLayout("", "[grow][grow]", "[shrink 0][shrink 0][shrink 0][shrink 0][grow][shrink 0]");
         setLayout(layout);
         initComponents();
@@ -107,9 +105,8 @@ public class SignatureVerificationJPanel extends JPanel implements SignatureVeri
         add(validateButton, "south");
     }
 
-    public void setComponentText(Locale locale) {
-        this.locale = locale;
-        ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
+    public void setComponentText() {
+        ResourceBundle r = ResourceBundle.getBundle("Bundle");
         selectFileLabel.setText(r.getString("fileSignatureVerificationJPanel.selectSignatureOrAttachedFileLabel"));
         selectSignedFileLabel.setText(r.getString("fileSignatureVerificationJPanel.selectSignedFileLabel"));
         validateButton.setText(r.getString("signatureVerificationJPanel.validateButton"));
@@ -123,7 +120,7 @@ public class SignatureVerificationJPanel extends JPanel implements SignatureVeri
                 if (FilesTool.checkIfFileExists(pkcs7Chooser.getSelectedFile())) {
                     pkcs7.setText(pkcs7Chooser.getSelectedFile().toString());
                 } else {
-                    ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
+                    ResourceBundle r = ResourceBundle.getBundle("Bundle");
                     JOptionPane.showMessageDialog(parent, r.getString("fileSignatureVerificationJPanel.selectedFileDoesNotExist"),
                             r.getString("errorMessage.title"), JOptionPane.WARNING_MESSAGE);
                 }
@@ -135,7 +132,7 @@ public class SignatureVerificationJPanel extends JPanel implements SignatureVeri
                 if (FilesTool.checkIfFileExists(signedFileChooser.getSelectedFile())) {
                     signedFile.setText(signedFileChooser.getSelectedFile().toString());
                 } else {
-                    ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
+                    ResourceBundle r = ResourceBundle.getBundle("Bundle");
                     JOptionPane.showMessageDialog(parent, r.getString("fileSignatureVerificationJPanel.selectedFileDoesNotExist"),
                             r.getString("errorMessage.title"), JOptionPane.WARNING_MESSAGE);
                 }
@@ -143,11 +140,17 @@ public class SignatureVerificationJPanel extends JPanel implements SignatureVeri
                 signedFileChooser.setSelectedFile(null);
             }
         });
+        validateButton.addActionListener((ae) -> {
+            if (pkcs7Chooser.getSelectedFile() == null) {
+                ResourceBundle r = ResourceBundle.getBundle("Bundle");
+                JOptionPane.showMessageDialog(parent, r.getString("signatureVerificationJPanel.noPkcs7FileSelected"),
+                        r.getString("errorMessage.title"), JOptionPane.WARNING_MESSAGE);
+            } else {
+                LiteSignerManager.getInstance().validateSignature(pkcs7Chooser.getSelectedFile(), signedFileChooser.getSelectedFile());
+            }
+        });
         backButton.addActionListener((ae) -> {
             ((FrameControls) parent).showChooseOptionPanel();
-        });
-        validateButton.addActionListener((ae) -> {
-            LiteSignerManager.getInstance().validateSignature(pkcs7Chooser.getSelectedFile(), signedFileChooser.getSelectedFile());
         });
     }
 

@@ -39,19 +39,14 @@ import callbacks.PasswordCallback;
 public class PasswordJOptionPane extends JOptionPane implements PasswordCallback {
 
     private final Component _parent;
-    private static Locale _locale;
 
     public PasswordJOptionPane(Component parent) {
         _parent = parent;
     }
 
-    public static void setPaneLocale(Locale locale) {
-        _locale = locale;
-    }
-
     @Override
     public char[] getPin() {
-        ResourceBundle r = ResourceBundle.getBundle("Bundle", _locale);
+        ResourceBundle r = ResourceBundle.getBundle("Bundle");
         String messageTitle = r.getString("passwordJOptionPane.messageTitle");
         JPasswordField password = new JPasswordField();
         password.addAncestorListener(new AncestorListener() {

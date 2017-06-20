@@ -62,10 +62,8 @@ public class SelectingDeviceJPanel extends JPanel implements DevicePanel {
     private JScrollPane deviceScrollPane;
     private final JFrame parent;
     //Used for the error messages.
-    private Locale locale;
 
-    public SelectingDeviceJPanel(JFrame parent, Locale locale) {
-        this.locale = locale;
+    public SelectingDeviceJPanel(JFrame parent) {
         this.parent = parent;
         MigLayout layout = new MigLayout("", "[grow][grow]", "[shrink 0][grow][shrink 0]");
         setLayout(layout);
@@ -102,9 +100,8 @@ public class SelectingDeviceJPanel extends JPanel implements DevicePanel {
         add(logInDeviceJButton, "span 2, right");
     }
 
-    public void setComponentText(Locale locale) {
-        this.locale = locale;
-        ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
+    public void setComponentText() {
+        ResourceBundle r = ResourceBundle.getBundle("Bundle");
         selectingDeviceJLabel.setText(r.getString("selectingDeviceJPanel.selectDeviceLabel"));
         logInDeviceJButton.setText(r.getString("selectingDeviceJPanel.logInButton"));
         backJButton.setText(r.getString("selectingDeviceJPanel.backJButton"));
@@ -116,7 +113,7 @@ public class SelectingDeviceJPanel extends JPanel implements DevicePanel {
 
     private void initTokensModel() {
         tokensModel = new DefaultTableModel() {
-            ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
+            ResourceBundle r = ResourceBundle.getBundle("Bundle");
             String[] certProps = {r.getString("selectingDeviceJPanel.tokenDescription"),
                 r.getString("selectingDeviceJPanel.tokenStatus")};
 
@@ -159,7 +156,7 @@ public class SelectingDeviceJPanel extends JPanel implements DevicePanel {
                 Object slotDescription = deviceTable.getValueAt(deviceTable.getSelectedRow(), 0);
                 LiteSignerManager.getInstance().deviceLogIn(slotDescription.toString());
             } else {
-                ResourceBundle r = ResourceBundle.getBundle("Bundle", locale);
+                ResourceBundle r = ResourceBundle.getBundle("Bundle");
                 JOptionPane.showMessageDialog(parent, r.getString("selectingDeviceJPanel.noTokenSelectedError"),
                         r.getString("errorMessage.title"), JOptionPane.WARNING_MESSAGE);
             }
