@@ -32,6 +32,8 @@ import gui.jpanels.SignatureVerificationJPanel;
 import gui.jpanels.SelectingCertificateJPanel;
 import gui.jpanels.SelectingFileAndSignatureJPanel;
 import java.awt.Dimension;
+import signers.Pkcs7;
+import tools.CertificateVerifier;
 
 /**
  *
@@ -40,7 +42,6 @@ import java.awt.Dimension;
 @Log
 public class MainFrame extends JFrame implements FrameControls {
 
-    private CardLayout rightLayout, leftLayout;
     private JPanel signingJPanel, deviceJPanel;
 
     private JSplitPane splitPaneH;
@@ -88,17 +89,13 @@ public class MainFrame extends JFrame implements FrameControls {
      * Initializes the signing panels and builds the singing layout.
      */
     private void initSigningPanels() {
-        rightLayout = new CardLayout();
-        leftLayout = new CardLayout();
         deviceJPanel = new JPanel();
         signingJPanel = new JPanel();
         splitPaneH = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         deviceSelectionPanel = new SelectingDeviceJPanel(this, locale);
         certificateSelectionPanel = new SelectingCertificateJPanel(this, locale);
         attachListeners();
-        deviceJPanel.setLayout(leftLayout);
         deviceJPanel.add(deviceSelectionPanel, deviceSelectionPanel.getClass().toString());
-        signingJPanel.setLayout(rightLayout);
         signingJPanel.add(certificateSelectionPanel, certificateSelectionPanel.getClass().getName());
         splitPaneH.setLeftComponent(deviceJPanel);
         splitPaneH.setRightComponent(signingJPanel);
@@ -160,7 +157,7 @@ public class MainFrame extends JFrame implements FrameControls {
 
     @Override
     public void showSignatureVerificationPanel() {
-        setMinimumSize(new Dimension(450, 350));
+        setMinimumSize(new Dimension(550, 350));
         this.getContentPane().removeAll();
         this.getContentPane().add(signatureVerificationJPanel, BorderLayout.CENTER);
         pack();
@@ -243,6 +240,8 @@ public class MainFrame extends JFrame implements FrameControls {
         LiteSignerManager.getInstance().setLocale(locale);
         setComponentText(locale);
         PasswordJOptionPane.setPaneLocale(locale);
+        Pkcs7.setLocale(locale);
+        CertificateVerifier.setLocale(locale);
     }
 
     /**
@@ -316,11 +315,8 @@ public class MainFrame extends JFrame implements FrameControls {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new MainFrame().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new MainFrame().setVisible(true);
         });
     }
 
