@@ -41,12 +41,24 @@ public enum Languages {
     @Getter
     private final String shortCountry;
 
+    /**
+     * Constructor
+     *
+     * @param name - language
+     * @param shortLanguage - short for language
+     * @param shortCountry - short for country
+     */
     private Languages(String name, String shortLanguage, String shortCountry) {
         this.name = name;
         this.shortLanguage = shortLanguage;
         this.shortCountry = shortCountry;
     }
 
+    /**
+     * Compose a locale off enum and return it
+     *
+     * @return new locale
+     */
     public Locale getLocale() {
         return new Locale(getShortLanguage(), getShortCountry());
     }
