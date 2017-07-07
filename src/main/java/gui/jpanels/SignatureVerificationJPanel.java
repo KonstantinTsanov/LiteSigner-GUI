@@ -23,11 +23,10 @@
  */
 package gui.jpanels;
 
-import callbacks.FrameControls;
-import callbacks.SignatureVerificationPanel;
+import interfaces.FrameControls;
 import core.LiteSignerManager;
+import interfaces.SignatureVerificationPanel;
 import java.util.ResourceBundle;
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -35,6 +34,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
@@ -57,6 +57,7 @@ public class SignatureVerificationJPanel extends JPanel implements SignatureVeri
     private JFileChooser signedFileChooser;
     private JButton selectSignedFileButton;
 
+    JScrollPane signatureInformationScrollPane;
     JTextArea signatureInformation;
 
     private JButton clearAllButton;
@@ -91,6 +92,8 @@ public class SignatureVerificationJPanel extends JPanel implements SignatureVeri
         //Signature information
         signatureInformation = new JTextArea();
         signatureInformation.setLineWrap(true);
+        signatureInformation.setEditable(false);
+        signatureInformationScrollPane = new JScrollPane(signatureInformation);
         clearAllButton = new JButton(new ImageIcon(getClass().getResource("/images/clear-list.png")));
         validateButton = new JButton();
         backButton = new JButton();
@@ -103,7 +106,7 @@ public class SignatureVerificationJPanel extends JPanel implements SignatureVeri
         add(selectSignedFileLabel, "wrap");
         add(signedFile, "growx");
         add(selectSignedFileButton, "wrap");
-        add(signatureInformation, "span, growx, growy, wrap,wmin 10");
+        add(signatureInformationScrollPane, "span, growx, growy, wrap,wmin 10");
         add(validateButton, "span, center, wrap, wmin 250");
         add(clearAllButton, "span, center, wrap");
         add(backButton, "south");
