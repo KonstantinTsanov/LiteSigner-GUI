@@ -23,9 +23,9 @@
  */
 package gui.jpanels;
 
-import callbacks.CertificatePanel;
-import callbacks.FrameControls;
+import interfaces.FrameControls;
 import core.LiteSignerManager;
+import interfaces.CertificatePanel;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;

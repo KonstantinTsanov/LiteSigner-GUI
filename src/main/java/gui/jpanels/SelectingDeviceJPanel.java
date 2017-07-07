@@ -23,9 +23,8 @@
  */
 package gui.jpanels;
 
-import callbacks.FrameControls;
+import interfaces.FrameControls;
 import java.awt.event.ActionEvent;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -37,8 +36,8 @@ import javax.swing.event.AncestorListener;
 import lombok.extern.java.Log;
 import net.miginfocom.swing.MigLayout;
 import core.LiteSignerManager;
+import interfaces.DevicePanel;
 import javax.swing.JOptionPane;
-import callbacks.DevicePanel;
 import java.awt.Color;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
