@@ -24,7 +24,6 @@
 package litesigner.callbacks.impl;
 
 import java.awt.Component;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
