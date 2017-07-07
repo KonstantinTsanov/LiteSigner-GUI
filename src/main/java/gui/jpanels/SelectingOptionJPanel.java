@@ -23,16 +23,16 @@
  */
 package gui.jpanels;
 
-import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
-import callbacks.FrameControls;
+import interfaces.FrameControls;
 import javax.swing.JFrame;
 
 /**
+ * A JPanel, allowing the user to select whether to sign or verify a file.
  *
  * @author Konstantin Tsanov <k.tsanov@gmail.com>
  */
