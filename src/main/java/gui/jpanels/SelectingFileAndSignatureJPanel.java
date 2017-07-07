@@ -23,12 +23,11 @@
  */
 package gui.jpanels;
 
-import callbacks.FrameControls;
+import interfaces.FrameControls;
 import core.LiteSignerManager;
 import enums.SignatureType;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
