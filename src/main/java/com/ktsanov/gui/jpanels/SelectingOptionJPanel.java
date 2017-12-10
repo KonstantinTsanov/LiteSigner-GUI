@@ -21,14 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package gui.jpanels;
+package com.ktsanov.gui.jpanels;
 
 import java.util.ResourceBundle;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
-import interfaces.FrameControls;
+import com.ktsanov.interfaces.FrameControls;
 import javax.swing.JFrame;
 
 /**

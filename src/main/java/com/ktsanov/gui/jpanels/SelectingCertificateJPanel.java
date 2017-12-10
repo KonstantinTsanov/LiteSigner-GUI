@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package gui.jpanels;
+package com.ktsanov.gui.jpanels;
 
-import interfaces.FrameControls;
-import core.LiteSignerManager;
-import interfaces.CertificatePanel;
+import com.ktsanov.interfaces.FrameControls;
+import com.ktsanov.core.LiteSignerManager;
+import com.ktsanov.interfaces.CertificatePanel;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;

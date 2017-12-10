@@ -21,21 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package interfaces;
+package com.ktsanov.tools;
+
+import java.io.File;
 
 /**
  *
  * @author Konstantin Tsanov <k.tsanov@gmail.com>
  */
-public interface FrameControls {
+public final class FilesTool {
 
-    public void showSigningPanel();
+    private FilesTool() {
 
-    public void showChooseOptionPanel();
+    }
 
-    public void showFileAndSignaturePanel();
-
-    public void hideFileAndSignaturePanel();
-
-    public void showSignatureVerificationPanel();
+    public static boolean checkIfFileExists(File file) {
+        return file.exists() && !file.isDirectory();
+    }
 }

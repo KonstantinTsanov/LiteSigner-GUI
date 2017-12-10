@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package litesigner.callbacks.impl;
+package com.ktsanov.callbacks.impl;
 
 import java.awt.Component;
 import java.util.ResourceBundle;
@@ -29,7 +29,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
-import callbacks.PasswordCallback;
+import com.ktsanov.callbacks.PasswordCallback;
 
 /**
  *

@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package gui.jpanels;
+package com.ktsanov.gui.jpanels;
 
-import interfaces.FrameControls;
-import core.LiteSignerManager;
-import interfaces.SignatureVerificationPanel;
+import com.ktsanov.interfaces.FrameControls;
+import com.ktsanov.core.LiteSignerManager;
+import com.ktsanov.interfaces.SignatureVerificationPanel;
 import java.util.ResourceBundle;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -38,7 +38,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
-import tools.FilesTool;
+import com.ktsanov.tools.FilesTool;
 
 /**
  *

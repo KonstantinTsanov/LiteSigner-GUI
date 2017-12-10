@@ -21,9 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package gui.jpanels;
+package com.ktsanov.gui.jpanels;
 
-import interfaces.FrameControls;
+import com.ktsanov.interfaces.FrameControls;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 import javax.swing.JButton;
@@ -35,8 +35,8 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import lombok.extern.java.Log;
 import net.miginfocom.swing.MigLayout;
-import core.LiteSignerManager;
-import interfaces.DevicePanel;
+import com.ktsanov.core.LiteSignerManager;
+import com.ktsanov.interfaces.DevicePanel;
 import javax.swing.JOptionPane;
 import java.awt.Color;
 import javax.swing.JTable;

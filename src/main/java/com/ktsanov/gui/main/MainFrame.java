@@ -21,10 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package gui.main;
+package com.ktsanov.gui.main;
 
-import gui.jpanels.SelectingOptionJPanel;
-import gui.jpanels.SelectingDeviceJPanel;
+import com.ktsanov.gui.jpanels.SelectingOptionJPanel;
+import com.ktsanov.gui.jpanels.SelectingDeviceJPanel;
 import java.awt.BorderLayout;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
@@ -33,8 +33,8 @@ import javax.swing.JSplitPane;
 import lombok.extern.java.Log;
 import net.miginfocom.swing.MigLayout;
 import org.usb4java.LibUsb;
-import interfaces.FrameControls;
-import enums.Languages;
+import com.ktsanov.interfaces.FrameControls;
+import com.ktsanov.enums.Languages;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Locale;
@@ -43,11 +43,11 @@ import java.util.prefs.Preferences;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import litesigner.callbacks.impl.PasswordJOptionPane;
-import core.LiteSignerManager;
-import gui.jpanels.SignatureVerificationJPanel;
-import gui.jpanels.SelectingCertificateJPanel;
-import gui.jpanels.SelectingFileAndSignatureJPanel;
+import com.ktsanov.callbacks.impl.PasswordJOptionPane;
+import com.ktsanov.core.LiteSignerManager;
+import com.ktsanov.gui.jpanels.SignatureVerificationJPanel;
+import com.ktsanov.gui.jpanels.SelectingCertificateJPanel;
+import com.ktsanov.gui.jpanels.SelectingFileAndSignatureJPanel;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import javax.swing.JOptionPane;
